@@ -684,7 +684,7 @@
         <div id="pageAdminUsers" class="page-section hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 class="page-title" style="margin:0;">Kelola Users</h2>
-            <button class="btn btn-primary" onclick="openUserModal()">+ Tambah User</button>
+            <button class="btn btn-primary" style="width: auto;" onclick="openUserModal()">+ Tambah User</button>
           </div>
 
           <div class="admin-table-container">
@@ -708,7 +708,7 @@
         <div id="pageAdminTools" class="page-section hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 class="page-title" style="margin:0;">Kelola Tools Eksklusif</h2>
-            <button class="btn btn-primary" onclick="openToolModal()">+ Tambah Tool</button>
+            <button class="btn btn-primary" style="width: auto;" onclick="openToolModal()">+ Tambah Tool</button>
           </div>
           
           <div class="admin-table-container">
@@ -745,7 +745,7 @@
               <div id="permToolsCheckboxContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;"></div>
             </div>
 
-            <button class="btn btn-primary" style="margin-top: 16px;" onclick="saveUserPermissions()">Simpan Akses</button>
+            <button class="btn btn-primary" id="btnSavePerms" style="margin-top: 16px;" onclick="saveUserPermissions()">Simpan Akses</button>
           </div>
         </div>
 
@@ -753,39 +753,7 @@
     </div>
   </div>
 
-  <!-- MODAL EDIT/ADD TOOL -->
-  <div id="toolModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
-    <div class="auth-card" style="max-width: 500px;">
-      <h3 id="modalToolTitle" style="margin-bottom: 16px;">Form Tool Eksklusif</h3>
-      <input type="hidden" id="modalToolId">
-      <div class="form-group">
-        <label>Nama Tool</label>
-        <input type="text" id="modalToolName" class="form-control" placeholder="Contoh: Affiliate Video Maker" required>
-      </div>
-      <div class="form-group">
-        <label>Slug</label>
-        <input type="text" id="modalToolSlug" class="form-control" placeholder="affiliate-video-maker (opsional)">
-      </div>
-      <div class="form-group">
-        <label>Icon (Emoji)</label>
-        <input type="text" id="modalToolIcon" class="form-control" placeholder="🎬" value="🛠️">
-      </div>
-      <div class="form-group">
-        <label>Deskripsi Tool</label>
-        <textarea id="modalToolDesc" class="form-control" rows="2" placeholder="Deskripsi singkat mengenai tool..."></textarea>
-      </div>
-      <div class="form-group">
-        <label>URL / Endpoint Tool Eksklusif</label>
-        <input type="url" id="modalToolUrl" class="form-control" placeholder="https://..." required>
-      </div>
-      <div class="form-group">
-        <label>Link Pembelian / Checkout URL (Jika Belum Dimiliki)</label>
-        <input type="url" id="modalToolBuyUrl" class="form-control" placeholder="https://asaltekun.id/checkout/...">
-      </div>
-      <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
-        <input type="checkbox" id="modalToolActive" checked style="width: 18px; height: 18px;">
-        <label for="modalToolActive" style="margin: 0; cursor: pointer;">Status Aktif</label>
-  <!-- MODAL EDIT USER -->
+  <!-- MODAL EDIT/ADD USER BY ADMIN -->
   <div id="editUserModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
     <div class="auth-card" style="max-width: 450px;">
       <h3 style="margin-bottom: 16px;">Edit Data & Password User</h3>
@@ -823,7 +791,82 @@
       </div>
       <div style="display: flex; gap: 10px; margin-top: 20px;">
         <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeEditUserModal()">Batal</button>
-        <button type="button" class="btn btn-primary" style="flex:1;" onclick="submitEditUserForm()">Simpan Perubahan</button>
+        <button type="button" id="btnSubmitEditUser" class="btn btn-primary" style="flex:1;" onclick="submitEditUserForm()">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT/ADD TOOL -->
+  <div id="toolModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
+    <div class="auth-card" style="max-width: 500px;">
+      <h3 id="modalToolTitle" style="margin-bottom: 16px;">Form Tool Eksklusif</h3>
+      <input type="hidden" id="modalToolId">
+      <div class="form-group">
+        <label>Nama Tool</label>
+        <input type="text" id="modalToolName" class="form-control" placeholder="Contoh: Affiliate Video Maker" required>
+      </div>
+      <div class="form-group">
+        <label>Slug</label>
+        <input type="text" id="modalToolSlug" class="form-control" placeholder="affiliate-video-maker (opsional)">
+      </div>
+      <div class="form-group">
+        <label>Icon (Emoji)</label>
+        <input type="text" id="modalToolIcon" class="form-control" placeholder="🎬" value="🛠️">
+      </div>
+      <div class="form-group">
+        <label>Deskripsi Tool</label>
+        <textarea id="modalToolDesc" class="form-control" rows="2" placeholder="Deskripsi singkat mengenai tool..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>URL / Endpoint Tool Eksklusif</label>
+        <input type="url" id="modalToolUrl" class="form-control" placeholder="https://..." required>
+      </div>
+      <div class="form-group">
+        <label>Link Pembelian / Checkout URL (Jika Belum Dimiliki)</label>
+        <input type="url" id="modalToolBuyUrl" class="form-control" placeholder="https://asaltekun.id/checkout/...">
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="modalToolActive" checked style="width: 18px; height: 18px;">
+        <label for="modalToolActive" style="margin: 0; cursor: pointer;">Status Aktif</label>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeToolModal()">Batal</button>
+        <button type="button" id="btnSubmitTool" class="btn btn-primary" style="flex:1;" onclick="submitToolForm()">Simpan Tool</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ADD USER -->
+  <div id="userModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
+    <div class="auth-card" style="max-width: 450px;">
+      <h3 style="margin-bottom: 16px;">Tambah User Baru</h3>
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="modalUserName" class="form-control" placeholder="Nama User" required>
+      </div>
+      <div class="form-group">
+        <label>Email Registered</label>
+        <input type="email" id="modalUserEmail" class="form-control" placeholder="email@domain.com" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div style="position: relative; display: flex; align-items: center;">
+          <input type="password" id="modalUserPassword" class="form-control" placeholder="Password" required style="padding-right: 44px;">
+          <button type="button" onclick="togglePasswordVisibility('modalUserPassword', 'addEyeIcon')" title="Tampilkan/Sembunyikan Password" style="position: absolute; right: 8px; background: transparent; border: none; cursor: pointer; padding: 6px; font-size: 16px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+            <span id="addEyeIcon">👁️</span>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="modalUserRole" class="form-control">
+          <option value="user">User / Member</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeUserModal()">Batal</button>
+        <button type="button" id="btnSubmitAddUser" class="btn btn-primary" style="flex:1;" onclick="submitUserForm()">Buat User</button>
       </div>
     </div>
   </div>
@@ -926,9 +969,9 @@
       
       document.getElementById('userNameLabel').innerText = currentUser.name;
       document.getElementById('userRoleLabel').innerText = currentUser.role;
-      document.getElementById('userAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
+      document.getElementById('userAvatar').innerText = currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U';
 
-      if (currentUser.role === 'admin') {
+      if (String(currentUser.role).toLowerCase() === 'admin') {
         document.getElementById('adminNavSection').classList.remove('hidden');
       } else {
         document.getElementById('adminNavSection').classList.add('hidden');
@@ -1027,7 +1070,7 @@
         document.getElementById('profRole').value = currentUser.role;
 
         const apiContainer = document.getElementById('profApiUrlContainer');
-        if (currentUser && currentUser.role === 'admin') {
+        if (currentUser && String(currentUser.role).toLowerCase() === 'admin') {
           apiContainer.classList.remove('hidden');
           document.getElementById('profApiUrl').value = backendUrl;
         } else {
@@ -1135,7 +1178,7 @@
       showToast('Memverifikasi izin akses server...');
 
       try {
-        const res = await callApi('getToolUrl', { token: sessionToken, toolId: toolId });
+        const res = await callApi('getToolUrl', { token: sessionToken, toolId: String(toolId) });
         if (res.success && res.canvasUrl) {
           showToast('Izin terverifikasi! Mengalihkan ke ' + res.name);
           if (targetTab) {
@@ -1163,7 +1206,7 @@
           
           res.users.forEach(u => {
             const tr = document.createElement('tr');
-            const isSelf = u.userId === currentUser.userId;
+            const isSelf = String(u.userId).trim() === String(currentUser.userId).trim();
             tr.innerHTML = `
               <td><strong>${escapeHtml(u.name)}</strong></td>
               <td>${escapeHtml(u.email)}</td>
@@ -1172,9 +1215,9 @@
               <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
               <td>
                 <div style="display:flex; gap:6px;">
-                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${u.userId}')">✏️ Edit / Pass</button>
+                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId))}')">✏️ Edit / Pass</button>
                   ${!isSelf ? `
-                    <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${u.userId}', '${u.status === 'active' ? 'inactive' : 'active'}')">
+                    <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${escapeHtml(String(u.userId))}', '${u.status === 'active' ? 'inactive' : 'active'}')">
                       ${u.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}
                     </button>
                   ` : ''}
@@ -1192,14 +1235,18 @@
     }
 
     function openEditUserModal(userId) {
-      const user = adminUsersCache.find(u => u.userId === userId);
-      if (!user) return;
+      const searchId = String(userId).trim();
+      const user = adminUsersCache.find(u => String(u.userId).trim() === searchId);
+      if (!user) {
+        showToast('Data user tidak ditemukan.', true);
+        return;
+      }
       document.getElementById('editUserId').value = user.userId;
       document.getElementById('editUserName').value = user.name;
       document.getElementById('editUserEmail').value = user.email;
-      document.getElementById('editUserPassword').value = user.password;
-      document.getElementById('editUserRole').value = user.role;
-      document.getElementById('editUserStatus').value = user.status;
+      document.getElementById('editUserPassword').value = user.password || '';
+      document.getElementById('editUserRole').value = user.role || 'user';
+      document.getElementById('editUserStatus').value = user.status || 'active';
       document.getElementById('editUserModal').classList.remove('hidden');
     }
 
@@ -1212,6 +1259,10 @@
       const newPass = document.getElementById('editUserPassword').value;
       const newRole = document.getElementById('editUserRole').value;
       const newStatus = document.getElementById('editUserStatus').value;
+      const btn = document.getElementById('btnSubmitEditUser');
+
+      btn.disabled = true;
+      btn.innerText = 'Memproses...';
 
       try {
         const res = await callApi('adminUpdateUser', { 
@@ -1221,6 +1272,9 @@
           newRole: newRole,
           newPassword: newPass 
         });
+        btn.disabled = false;
+        btn.innerText = 'Simpan Perubahan';
+
         if (res.success) {
           showToast(res.message);
           closeEditUserModal();
@@ -1229,6 +1283,8 @@
           showToast(res.message, true);
         }
       } catch (err) {
+        btn.disabled = false;
+        btn.innerText = 'Simpan Perubahan';
         showToast('Gagal memperbarui user: ' + err.message, true);
       }
     }
@@ -1250,14 +1306,21 @@
       const email = document.getElementById('modalUserEmail').value;
       const pass = document.getElementById('modalUserPassword').value;
       const role = document.getElementById('modalUserRole').value;
+      const btn = document.getElementById('btnSubmitAddUser');
 
       if (!name || !email || !pass) {
         showToast('Semua kolom wajib diisi!', true);
         return;
       }
 
+      btn.disabled = true;
+      btn.innerText = 'Memproses...';
+
       try {
         const res = await callApi('adminCreateUser', { token: sessionToken, name: name, email: email, password: pass, role: role });
+        btn.disabled = false;
+        btn.innerText = 'Buat User';
+
         if (res.success) {
           showToast(res.message);
           closeUserModal();
@@ -1266,6 +1329,8 @@
           showToast(res.message, true);
         }
       } catch (err) {
+        btn.disabled = false;
+        btn.innerText = 'Buat User';
         showToast('Gagal membuat user: ' + err.message, true);
       }
     }
@@ -1300,7 +1365,7 @@
               <td><code>${escapeHtml(t.slug)}</code></td>
               <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
               <td>
-                <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="editToolModal('${t.toolId}')">Edit</button>
+                <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="editToolModal('${escapeHtml(String(t.toolId))}')">Edit</button>
               </td>
             `;
             tbody.appendChild(tr);
@@ -1327,7 +1392,8 @@
     }
 
     function editToolModal(toolId) {
-      const tool = adminToolsCache.find(t => t.toolId === toolId);
+      const searchId = String(toolId).trim();
+      const tool = adminToolsCache.find(t => String(t.toolId).trim() === searchId);
       if (!tool) return;
       document.getElementById('modalToolTitle').innerText = 'Edit Tool Eksklusif';
       document.getElementById('modalToolId').value = tool.toolId;
@@ -1346,6 +1412,7 @@
     }
 
     async function submitToolForm() {
+      const btn = document.getElementById('btnSubmitTool');
       const toolData = {
         toolId: document.getElementById('modalToolId').value,
         name: document.getElementById('modalToolName').value,
@@ -1362,8 +1429,14 @@
         return;
       }
 
+      btn.disabled = true;
+      btn.innerText = 'Memproses...';
+
       try {
         const res = await callApi('adminSaveTool', { token: sessionToken, toolData: toolData });
+        btn.disabled = false;
+        btn.innerText = 'Simpan Tool';
+
         if (res.success) {
           showToast(res.message);
           closeToolModal();
@@ -1372,31 +1445,42 @@
           showToast(res.message, true);
         }
       } catch (err) {
+        btn.disabled = false;
+        btn.innerText = 'Simpan Tool';
         showToast('Gagal menyimpan tool: ' + err.message, true);
       }
     }
 
     let currentPermissionsCache = [];
 
+    /**
+     * Fast Parallel Fetching for Admin Permissions Page
+     */
     async function loadAdminPermissionsData() {
       try {
-        const resUsers = await callApi('adminGetUsers', { token: sessionToken });
-        if (resUsers.success) {
+        showToast('Memuat data hak akses...');
+        
+        // Execute 3 API calls concurrently using Promise.all for maximum speed
+        const [resUsers, resTools, resPerms] = await Promise.all([
+          callApi('adminGetUsers', { token: sessionToken }),
+          callApi('adminGetTools', { token: sessionToken }),
+          callApi('adminGetPermissions', { token: sessionToken })
+        ]);
+
+        if (resUsers.success && resTools.success && resPerms.success) {
           adminUsersCache = resUsers.users;
+          adminToolsCache = resTools.tools;
+          currentPermissionsCache = resPerms.permissions;
+
           const select = document.getElementById('permUserSelect');
           select.innerHTML = '<option value="">-- Pilih User --</option>';
           resUsers.users.forEach(u => {
-            select.innerHTML += `<option value="${u.userId}">${escapeHtml(u.name)} (${escapeHtml(u.email)})</option>`;
+            select.innerHTML += `<option value="${escapeHtml(String(u.userId))}">${escapeHtml(u.name)} (${escapeHtml(u.email)})</option>`;
           });
 
-          const resTools = await callApi('adminGetTools', { token: sessionToken });
-          if (resTools.success) {
-            adminToolsCache = resTools.tools;
-            const resPerms = await callApi('adminGetPermissions', { token: sessionToken });
-            if (resPerms.success) {
-              currentPermissionsCache = resPerms.permissions;
-            }
-          }
+          loadUserPermissionCheckboxes();
+        } else {
+          showToast('Gagal memuat beberapa data permissions.', true);
         }
       } catch (err) {
         showToast('Gagal memuat data permissions: ' + err.message, true);
@@ -1404,28 +1488,31 @@
     }
 
     function loadUserPermissionCheckboxes() {
-      const selectedUserId = document.getElementById('permUserSelect').value;
+      const selectedUserId = String(document.getElementById('permUserSelect').value).trim();
       const container = document.getElementById('permToolsCheckboxContainer');
       container.innerHTML = '';
 
       if (!selectedUserId) return;
 
       adminToolsCache.forEach(tool => {
-        const hasPerm = currentPermissionsCache.some(p => p.userId === selectedUserId && p.toolId === tool.toolId && p.active);
+        const toolIdStr = String(tool.toolId).trim();
+        const hasPerm = currentPermissionsCache.some(p => String(p.userId).trim() === selectedUserId && String(p.toolId).trim() === toolIdStr && p.active);
         const div = document.createElement('div');
         div.style.display = 'flex';
         div.style.alignItems = 'center';
         div.style.gap = '8px';
         div.innerHTML = `
-          <input type="checkbox" id="perm_tool_${tool.toolId}" value="${tool.toolId}" ${hasPerm ? 'checked' : ''} style="width: 18px; height: 18px;">
-          <label for="perm_tool_${tool.toolId}">${tool.icon} <strong>${escapeHtml(tool.name)}</strong></label>
+          <input type="checkbox" id="perm_tool_${toolIdStr}" value="${toolIdStr}" ${hasPerm ? 'checked' : ''} style="width: 18px; height: 18px;">
+          <label for="perm_tool_${toolIdStr}">${tool.icon} <strong>${escapeHtml(tool.name)}</strong></label>
         `;
         container.appendChild(div);
       });
     }
 
     async function saveUserPermissions() {
-      const selectedUserId = document.getElementById('permUserSelect').value;
+      const selectedUserId = String(document.getElementById('permUserSelect').value).trim();
+      const btn = document.getElementById('btnSavePerms');
+
       if (!selectedUserId) {
         showToast('Silakan pilih user terlebih dahulu.', true);
         return;
@@ -1433,14 +1520,21 @@
 
       const selectedToolIds = [];
       adminToolsCache.forEach(tool => {
-        const chk = document.getElementById('perm_tool_' + tool.toolId);
+        const toolIdStr = String(tool.toolId).trim();
+        const chk = document.getElementById('perm_tool_' + toolIdStr);
         if (chk && chk.checked) {
-          selectedToolIds.push(tool.toolId);
+          selectedToolIds.push(toolIdStr);
         }
       });
 
+      btn.disabled = true;
+      btn.innerText = 'Memproses...';
+
       try {
         const res = await callApi('adminSavePermissions', { token: sessionToken, targetUserId: selectedUserId, selectedToolIds: selectedToolIds });
+        btn.disabled = false;
+        btn.innerText = 'Simpan Akses';
+
         if (res.success) {
           showToast(res.message);
           loadAdminPermissionsData();
@@ -1448,6 +1542,8 @@
           showToast(res.message, true);
         }
       } catch (err) {
+        btn.disabled = false;
+        btn.innerText = 'Simpan Akses';
         showToast('Gagal menyimpan permissions: ' + err.message, true);
       }
     }
