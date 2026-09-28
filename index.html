@@ -1394,16 +1394,19 @@
     function editToolModal(toolId) {
       const searchId = String(toolId).trim();
       const tool = adminToolsCache.find(t => String(t.toolId).trim() === searchId);
-      if (!tool) return;
+      if (!tool) {
+        showToast('Data tool tidak ditemukan.', true);
+        return;
+      }
       document.getElementById('modalToolTitle').innerText = 'Edit Tool Eksklusif';
-      document.getElementById('modalToolId').value = tool.toolId;
-      document.getElementById('modalToolName').value = tool.name;
-      document.getElementById('modalToolSlug').value = tool.slug;
-      document.getElementById('modalToolIcon').value = tool.icon;
-      document.getElementById('modalToolDesc').value = tool.description;
-      document.getElementById('modalToolUrl').value = tool.canvasUrl;
+      document.getElementById('modalToolId').value = tool.toolId || '';
+      document.getElementById('modalToolName').value = tool.name || '';
+      document.getElementById('modalToolSlug').value = tool.slug || '';
+      document.getElementById('modalToolIcon').value = tool.icon || '🛠️';
+      document.getElementById('modalToolDesc').value = tool.description || '';
+      document.getElementById('modalToolUrl').value = tool.canvasUrl || '';
       document.getElementById('modalToolBuyUrl').value = tool.buyUrl || '';
-      document.getElementById('modalToolActive').checked = tool.active;
+      document.getElementById('modalToolActive').checked = tool.active !== false;
       document.getElementById('toolModal').classList.remove('hidden');
     }
 
@@ -1414,13 +1417,13 @@
     async function submitToolForm() {
       const btn = document.getElementById('btnSubmitTool');
       const toolData = {
-        toolId: document.getElementById('modalToolId').value,
-        name: document.getElementById('modalToolName').value,
-        slug: document.getElementById('modalToolSlug').value,
-        icon: document.getElementById('modalToolIcon').value,
-        description: document.getElementById('modalToolDesc').value,
-        canvasUrl: document.getElementById('modalToolUrl').value,
-        buyUrl: document.getElementById('modalToolBuyUrl').value,
+        toolId: String(document.getElementById('modalToolId').value || '').trim(),
+        name: String(document.getElementById('modalToolName').value || '').trim(),
+        slug: String(document.getElementById('modalToolSlug').value || '').trim(),
+        icon: String(document.getElementById('modalToolIcon').value || '🛠️').trim(),
+        description: String(document.getElementById('modalToolDesc').value || '').trim(),
+        canvasUrl: String(document.getElementById('modalToolUrl').value || '').trim(),
+        buyUrl: String(document.getElementById('modalToolBuyUrl').value || '').trim(),
         active: document.getElementById('modalToolActive').checked
       };
 
