@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AsalTekun.id - Member Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #059669;
+      --primary-hover: #047857;
+      --primary-light: #ecfdf5;
+      --primary-dark: #064e3b;
+      --bg-main: #f8fafc;
+      --surface: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.03);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* WATERMARK OVERLAY */
+    .bg-watermark {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 90px;
+      font-weight: 800;
+      color: var(--primary);
+      opacity: 0.03;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      letter-spacing: -2px;
+    }
+
+    /* AUTHENTICATION VIEW */
+    .auth-overlay {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: linear-gradient(135deg, #064e3b 0%, #059669 50%, #10b981 100%);
+      position: relative;
+      z-index: 10;
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .brand-logo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .brand-logo h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .brand-logo span {
+      color: var(--primary);
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      background: #ffffff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    /* API CONFIG BAR */
+    .api-config-banner {
+      background: #fef3c7;
+      border: 1px solid #fde047;
+      color: #78350f;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .api-config-banner button {
+      background: #d97706;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* SOCIAL LINKS & FOOTER */
+    .social-footer {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .social-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-btn:hover {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border-color: var(--primary);
+    }
+
+    .copyright-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* MAIN APP LAYOUT */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 40;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .sidebar-header span {
+      color: var(--primary);
+    }
+
+    .sidebar-nav {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: #f8fafc;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .user-info {
+      overflow: hidden;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: capitalize;
+    }
+
+    .main-wrapper {
+      flex: 1;
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .mobile-header {
+      display: none;
+      background: var(--surface);
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .main-content {
+      padding: 32px;
+      flex: 1;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .page-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: #cbd5e1;
+    }
+
+    .tool-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .tool-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .tool-description {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+      flex: 1;
+    }
+
+    .admin-table-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .table th, .table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-success { background: #dcfce7; color: #15803d; }
+    .badge-secondary { background: #f1f5f9; color: #475569; }
+    .badge-danger { background: #fee2e2; color: #b91c1c; }
+
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      padding: 14px 20px;
+      border-radius: 10px;
+      background: var(--text-main);
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+      .mobile-header {
+        display: flex;
+      }
+      .main-content {
+        padding: 20px;
+      }
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- BACKGROUND WATERMARK -->
+  <div class="bg-watermark">AsalTekun</div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- 1. AUTHENTICATION VIEW -->
+  <div id="authView" class="auth-overlay">
+    <div class="auth-card">
+      <div class="brand-logo">
+        <h1>AsalTekun<span>.id</span></h1>
+        <p class="brand-subtitle">Portal Exclusive Member Canvas Tools</p>
+      </div>
+
+      <!-- API URL CONFIG CHECKER -->
+      <div id="apiConfigBanner" class="api-config-banner hidden">
+        <span>⚠️ Backend URL belum dikonfigurasi</span>
+        <button onclick="promptApiUrl()">Set URL</button>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Email Registered</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="nama@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required style="padding-right: 44px;">
+            <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" title="Tampilkan/Sembunyikan Password" style="position: absolute; right: 8px; background: transparent; border: none; cursor: pointer; padding: 6px; font-size: 16px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+              <span id="loginEyeIcon">👁️</span>
+            </button>
+          </div>
+        </div>
+        <button type="submit" id="loginSubmitBtn" class="btn btn-primary">Masuk ke Dashboard</button>
+      </form>
+
+      <!-- SOCIAL MEDIA LINKS & WATERMARK FOOTER -->
+      <div class="social-footer">
+        <div class="social-links">
+          <a href="https://www.instagram.com/asaltekun" target="_blank" rel="noopener" class="social-btn">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            Instagram
+          </a>
+          <a href="https://www.threads.net/@asaltekun" target="_blank" rel="noopener" class="social-btn">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12.186 24h-.007c-3.582-.022-6.324-1.18-8.151-3.442-1.674-2.072-2.327-4.912-1.942-8.442.502-4.597 3.32-8.19 7.352-9.375 1.413-.415 2.912-.582 4.457-.497 3.524.195 6.44 1.637 8.196 4.059 1.503 2.074 2.102 4.708 1.688 7.423-.424 2.784-1.996 5.093-4.428 6.502-2.074 1.203-4.582 1.662-7.062 1.294-.483-.072-.942-.206-1.378-.399-.304-.135-.443-.487-.308-.791.135-.304.488-.442.791-.308.362.161.745.272 1.147.332 2.13.315 4.281-.078 6.059-1.11 2.071-1.2 3.409-3.163 3.769-5.527.352-2.311-.158-4.551-1.436-6.315-1.492-2.059-3.98-3.287-6.993-3.454-1.317-.073-2.597.07-3.803.424-3.447 1.013-5.851 4.084-6.279 8.014-.328 3.007.228 5.42 1.654 7.183 1.558 1.928 3.9 2.915 6.963 2.934 3.037.018 5.568-.934 7.127-2.678 1.147-1.282 1.701-2.912 1.603-4.711-.144-2.658-1.979-4.229-4.52-4.229-1.488 0-2.825.592-3.668 1.625-.494.605-.805 1.354-.901 2.168-.073.618.02 1.229.262 1.768.398.887 1.258 1.439 2.24 1.439.813 0 1.54-.373 1.942-.998.243-.377.625-.568 1.045-.521.438.05.772.378.814.815.086.892-.32 1.782-1.059 2.383-.873.71-2.023 1.039-3.239.927-1.579-.146-2.923-1.01-3.501-2.311-.397-.894-.52-1.908-.348-2.931.186-1.109.704-2.127 1.497-2.946 1.362-1.405 3.327-2.18 5.39-2.18 3.659 0 6.388 2.292 6.593 5.541.134 2.124-.52 4.053-1.892 5.582-1.897 2.122-4.838 3.256-8.28 3.235z"/></svg>
+            Threads
+          </a>
+        </div>
+        <div class="copyright-text">
+          © 2026 AsalTekun.id. All Rights Reserved.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MAIN DASHBOARD APP VIEW -->
+  <div id="appView" class="app-container hidden">
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <h2>AsalTekun<span>.id</span></h2>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" id="navDashboard" onclick="switchPage('dashboard')">
+          <span>🏠</span> Dashboard
+        </a>
+        <a class="nav-item" id="navTools" onclick="switchPage('tools')">
+          <span>🛠️</span> Tools Saya
+        </a>
+        <a class="nav-item" id="navProfile" onclick="switchPage('profile')">
+          <span>👤</span> Profil Akun
+        </a>
+        <div id="adminNavSection" class="hidden">
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin: 16px 12px 6px 12px; text-transform: uppercase;">ADMINISTRATOR</div>
+          <a class="nav-item" id="navAdminUsers" onclick="switchPage('adminUsers')">👥 Kelola Users</a>
+          <a class="nav-item" id="navAdminTools" onclick="switchPage('adminTools')">⚙️ Kelola Tools</a>
+          <a class="nav-item" id="navAdminPerms" onclick="switchPage('adminPerms')">🔑 Hak Akses</a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-badge">
+          <div id="userAvatar" class="avatar">U</div>
+          <div class="user-info">
+            <div id="userNameLabel" class="user-name">User Name</div>
+            <div id="userRoleLabel" class="user-role">Member</div>
+          </div>
+        </div>
+        
+        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 12px;" onclick="handleLogout()">Keluar</button>
+
+        <div style="text-align: center; font-size: 11px; color: var(--text-muted);">
+          <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 6px;">
+            <a href="https://www.instagram.com/asaltekun" target="_blank" style="color: var(--text-muted); text-decoration: none;">Instagram</a>
+            •
+            <a href="https://www.threads.net/@asaltekun" target="_blank" style="color: var(--text-muted); text-decoration: none;">Threads</a>
+          </div>
+          © 2026 AsalTekun.id
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+      <header class="mobile-header">
+        <h3 style="color: var(--primary-dark);">AsalTekun.id</h3>
+        <button class="btn btn-secondary" onclick="toggleMobileSidebar()">☰ Menu</button>
+      </header>
+
+      <main class="main-content">
+
+        <!-- PAGE: DASHBOARD HOME -->
+        <div id="pageDashboard" class="page-section">
+          <h2 class="page-title" id="welcomeHeading">Selamat Datang!</h2>
+          <p class="page-desc">Pilih dan jalankan tool Gemini Canvas eksklusif Anda di bawah ini.</p>
+          <div id="dashboardToolsGrid" class="tools-grid"></div>
+        </div>
+
+        <!-- PAGE: TOOLS LIST -->
+        <div id="pageTools" class="page-section hidden">
+          <h2 class="page-title">Tools Anda</h2>
+          <p class="page-desc">Daftar seluruh tool eksklusif yang aktif untuk akun Anda.</p>
+          <div id="toolsListGrid" class="tools-grid"></div>
+        </div>
+
+        <!-- PAGE: PROFILE -->
+        <div id="pageProfile" class="page-section hidden">
+          <h2 class="page-title">Profil Akun</h2>
+          <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); max-width: 500px;">
+            <div class="form-group">
+              <label>Nama Lengkap</label>
+              <input type="text" id="profName" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+              <label>Email Registered</label>
+              <input type="email" id="profEmail" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+              <label>Role Status</label>
+              <input type="text" id="profRole" class="form-control" readonly>
+            </div>
+            <div class="form-group" style="margin-top:20px;">
+              <label>Backend Apps Script Endpoint URL</label>
+              <input type="text" id="profApiUrl" class="form-control" placeholder="https://script.google.com/macros/s/..." readonly>
+              <button class="btn btn-secondary" style="margin-top:8px; font-size:12px;" onclick="promptApiUrl()">Ubah Endpoint Backend</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: ADMIN USERS -->
+        <div id="pageAdminUsers" class="page-section hidden">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 class="page-title" style="margin:0;">Kelola Users</h2>
+            <button class="btn btn-primary" onclick="openUserModal()">+ Tambah User</button>
+          </div>
+
+          <div class="admin-table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PAGE: ADMIN TOOLS -->
+        <div id="pageAdminTools" class="page-section hidden">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 class="page-title" style="margin:0;">Kelola Tools Canvas</h2>
+            <button class="btn btn-primary" onclick="openToolModal()">+ Tambah Tool</button>
+          </div>
+          
+          <div class="admin-table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Icon</th>
+                  <th>Nama Tool</th>
+                  <th>Slug</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminToolsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PAGE: ADMIN PERMISSIONS -->
+        <div id="pageAdminPerms" class="page-section hidden">
+          <h2 class="page-title">Kelola Hak Akses Tools</h2>
+          <p class="page-desc">Pilih user dan centang tool yang diberikan akses.</p>
+
+          <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); max-width: 600px;">
+            <div class="form-group">
+              <label>Pilih User</label>
+              <select id="permUserSelect" class="form-control" onchange="loadUserPermissionCheckboxes()">
+                <option value="">-- Pilih User --</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+              <label>Pilih Tool yang Diberikan Akses:</label>
+              <div id="permToolsCheckboxContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;"></div>
+            </div>
+
+            <button class="btn btn-primary" style="margin-top: 16px;" onclick="saveUserPermissions()">Simpan Akses</button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT/ADD TOOL -->
+  <div id="toolModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
+    <div class="auth-card" style="max-width: 500px;">
+      <h3 id="modalToolTitle" style="margin-bottom: 16px;">Form Tool Canvas</h3>
+      <input type="hidden" id="modalToolId">
+      <div class="form-group">
+        <label>Nama Tool</label>
+        <input type="text" id="modalToolName" class="form-control" placeholder="Contoh: Affiliate Video Maker" required>
+      </div>
+      <div class="form-group">
+        <label>Slug</label>
+        <input type="text" id="modalToolSlug" class="form-control" placeholder="affiliate-video-maker (opsional)">
+      </div>
+      <div class="form-group">
+        <label>Icon (Emoji)</label>
+        <input type="text" id="modalToolIcon" class="form-control" placeholder="🎬" value="🛠️">
+      </div>
+      <div class="form-group">
+        <label>Deskripsi Tool</label>
+        <textarea id="modalToolDesc" class="form-control" rows="2" placeholder="Deskripsi singkat mengenai tool..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Canvas URL (Link Gemini Canvas)</label>
+        <input type="url" id="modalToolUrl" class="form-control" placeholder="https://..." required>
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="modalToolActive" checked style="width: 18px; height: 18px;">
+        <label for="modalToolActive" style="margin: 0; cursor: pointer;">Status Aktif</label>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeToolModal()">Batal</button>
+        <button type="button" class="btn btn-primary" style="flex:1;" onclick="submitToolForm()">Simpan Tool</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ADD USER -->
+  <div id="userModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
+    <div class="auth-card" style="max-width: 450px;">
+      <h3 style="margin-bottom: 16px;">Tambah User Baru</h3>
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="modalUserName" class="form-control" placeholder="Nama User" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="modalUserEmail" class="form-control" placeholder="user@email.com" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div style="position: relative; display: flex; align-items: center;">
+          <input type="password" id="modalUserPassword" class="form-control" placeholder="Password User" required style="padding-right: 44px;">
+          <button type="button" onclick="togglePasswordVisibility('modalUserPassword', 'modalUserEyeIcon')" title="Tampilkan/Sembunyikan Password" style="position: absolute; right: 8px; background: transparent; border: none; cursor: pointer; padding: 6px; font-size: 16px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+            <span id="modalUserEyeIcon">👁️</span>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="modalUserRole" class="form-control">
+          <option value="user">User / Member</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeUserModal()">Batal</button>
+        <button type="button" class="btn btn-primary" style="flex:1;" onclick="submitUserForm()">Simpan User</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let backendUrl = localStorage.getItem('asaltekun_backend_url') || '';
+    let sessionToken = localStorage.getItem('asaltekun_token') || null;
+    let currentUser = null;
+    let userTools = [];
+    let adminUsersCache = [];
+    let adminToolsCache = [];
+
+    /**
+     * Resilient HTTP Fetch Client for Google Apps Script API Endpoint
+     */
+    async function callApi(action, payload = {}) {
+      if (!backendUrl) {
+        showToast('Apps Script Backend URL belum dikonfigurasi!', true);
+        document.getElementById('apiConfigBanner').classList.remove('hidden');
+        throw new Error('Backend URL missing');
+      }
+
+      const bodyData = { action: action, ...payload };
+
+      try {
+        const response = await fetch(backendUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8' // Prevents CORS preflight issue with Apps Script
+          },
+          body: JSON.stringify(bodyData)
+        });
+
+        if (!response.ok) {
+          throw new Error('Server HTTP Error: ' + response.status);
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (err) {
+        console.error('API Error:', err);
+        throw err;
+      }
+    }
+
+    function promptApiUrl() {
+      const current = localStorage.getItem('asaltekun_backend_url') || '';
+      const input = prompt('Masukkan URL Web App Deployment Apps Script Anda:\n(Contoh: https://script.google.com/macros/s/.../exec)', current);
+      if (input && input.trim() !== '') {
+        backendUrl = input.trim();
+        localStorage.setItem('asaltekun_backend_url', backendUrl);
+        document.getElementById('apiConfigBanner').classList.add('hidden');
+        showToast('Backend URL berhasil diperbarui!');
+        if (sessionToken) verifyExistingSession();
+      }
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!input || !icon) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerText = '🙈';
+      } else {
+        input.type = 'password';
+        icon.innerText = '👁️';
+      }
+    }
+
+    function showToast(message, isError = false) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      if (isError) toast.style.background = '#b91c1c';
+      toast.innerHTML = (isError ? '⚠️ ' : '✅ ') + message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 4000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!backendUrl) {
+        document.getElementById('apiConfigBanner').classList.remove('hidden');
+      }
+      
+      if (sessionToken && backendUrl) {
+        verifyExistingSession();
+      } else {
+        showAuthView();
+      }
+    });
+
+    function showAuthView() {
+      document.getElementById('authView').classList.remove('hidden');
+      document.getElementById('appView').classList.add('hidden');
+    }
+
+    function showAppView() {
+      document.getElementById('authView').classList.add('hidden');
+      document.getElementById('appView').classList.remove('hidden');
+      
+      document.getElementById('userNameLabel').innerText = currentUser.name;
+      document.getElementById('userRoleLabel').innerText = currentUser.role;
+      document.getElementById('userAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
+
+      if (currentUser.role === 'admin') {
+        document.getElementById('adminNavSection').classList.remove('hidden');
+      } else {
+        document.getElementById('adminNavSection').classList.add('hidden');
+      }
+
+      loadUserTools();
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const btn = document.getElementById('loginSubmitBtn');
+
+      if (!backendUrl) {
+        promptApiUrl();
+        return;
+      }
+
+      if (!email || !password) {
+        showToast('Email dan password wajib diisi!', true);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Memproses...';
+
+      try {
+        const res = await callApi('login', { email: email, password: password });
+        btn.disabled = false;
+        btn.innerText = 'Masuk ke Dashboard';
+
+        if (res.success) {
+          sessionToken = res.token;
+          localStorage.setItem('asaltekun_token', res.token);
+          currentUser = res.user;
+          showToast('Selamat datang kembali, ' + res.user.name + '!');
+          showAppView();
+        } else {
+          showToast(res.message || 'Login gagal.', true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = 'Masuk ke Dashboard';
+        showToast('Koneksi backend gagal: ' + err.message, true);
+      }
+    }
+
+    async function verifyExistingSession() {
+      try {
+        const res = await callApi('getUserTools', { token: sessionToken });
+        if (res.success) {
+          currentUser = res.user;
+          userTools = res.tools || [];
+          showAppView();
+        } else {
+          localStorage.removeItem('asaltekun_token');
+          sessionToken = null;
+          showAuthView();
+        }
+      } catch (err) {
+        localStorage.removeItem('asaltekun_token');
+        sessionToken = null;
+        showAuthView();
+      }
+    }
+
+    async function handleLogout() {
+      if (sessionToken) {
+        try {
+          await callApi('logout', { token: sessionToken });
+        } catch(e) {}
+      }
+      localStorage.removeItem('asaltekun_token');
+      sessionToken = null;
+      currentUser = null;
+      showToast('Anda telah keluar.');
+      showAuthView();
+    }
+
+    function switchPage(page) {
+      document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      if (page === 'dashboard') {
+        document.getElementById('pageDashboard').classList.remove('hidden');
+        document.getElementById('navDashboard').classList.add('active');
+      } else if (page === 'tools') {
+        document.getElementById('pageTools').classList.remove('hidden');
+        document.getElementById('navTools').classList.add('active');
+      } else if (page === 'profile') {
+        document.getElementById('pageProfile').classList.remove('hidden');
+        document.getElementById('navProfile').classList.add('active');
+        document.getElementById('profName').value = currentUser.name;
+        document.getElementById('profEmail').value = currentUser.email;
+        document.getElementById('profRole').value = currentUser.role;
+        document.getElementById('profApiUrl').value = backendUrl;
+      } else if (page === 'adminUsers') {
+        document.getElementById('pageAdminUsers').classList.remove('hidden');
+        document.getElementById('navAdminUsers').classList.add('active');
+        loadAdminUsers();
+      } else if (page === 'adminTools') {
+        document.getElementById('pageAdminTools').classList.remove('hidden');
+        document.getElementById('navAdminTools').classList.add('active');
+        loadAdminTools();
+      } else if (page === 'adminPerms') {
+        document.getElementById('pageAdminPerms').classList.remove('hidden');
+        document.getElementById('navAdminPerms').classList.add('active');
+        loadAdminPermissionsData();
+      }
+
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function toggleMobileSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    async function loadUserTools() {
+      try {
+        const res = await callApi('getUserTools', { token: sessionToken });
+        if (res.success) {
+          currentUser = res.user;
+          userTools = res.tools;
+          renderToolsGrid();
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Gagal memuat tools: ' + err.message, true);
+      }
+    }
+
+    function renderToolsGrid() {
+      document.getElementById('welcomeHeading').innerText = 'Selamat Datang, ' + currentUser.name + '!';
+      
+      const dashContainer = document.getElementById('dashboardToolsGrid');
+      const toolsContainer = document.getElementById('toolsListGrid');
+      
+      if (!userTools || userTools.length === 0) {
+        const emptyState = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-muted); background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">Belum ada tool yang diberikan kepada Anda. Hubungi Administrator.</div>';
+        dashContainer.innerHTML = emptyState;
+        toolsContainer.innerHTML = emptyState;
+        return;
+      }
+
+      let cardsHtml = '';
+      userTools.forEach(t => {
+        cardsHtml += `
+          <div class="tool-card">
+            <div class="tool-icon">${t.icon || '🔧'}</div>
+            <div class="tool-title">${escapeHtml(t.name)}</div>
+            <div class="tool-description">${escapeHtml(t.description || 'Tidak ada deskripsi.')}</div>
+            <button class="btn btn-primary" onclick="launchToolDirect('${t.toolId}')">🚀 Buka Tool</button>
+          </div>
+        `;
+      });
+
+      dashContainer.innerHTML = cardsHtml;
+      toolsContainer.innerHTML = cardsHtml;
+    }
+
+    /**
+     * SECURE TOOL LAUNCHER WITH SERVER PERMISSION VALIDATION
+     */
+    async function launchToolDirect(toolId) {
+      // Immediate tab launch context to prevent browser popup block
+      const targetTab = window.open('about:blank', '_blank');
+      if (targetTab) {
+        targetTab.document.write(`
+          <div style="font-family:'Plus Jakarta Sans',sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; color:#064e3b; background:#ecfdf5; text-align:center; padding:20px;">
+            <div style="border: 4px solid #a7f3d0; border-left-color: #059669; border-radius: 50%; width: 44px; height: 44px; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
+            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+            <h2 style="margin-bottom:8px;">AsalTekun.id</h2>
+            <p style="font-size:14px; color:#047857;">Memverifikasi hak akses & mengalihkan ke Gemini Canvas...</p>
+          </div>
+        `);
+      }
+
+      showToast('Memverifikasi izin akses server...');
+
+      try {
+        const res = await callApi('getToolUrl', { token: sessionToken, toolId: toolId });
+        if (res.success && res.canvasUrl) {
+          showToast('Izin terverifikasi! Mengalihkan ke ' + res.name);
+          if (targetTab) {
+            targetTab.location.href = res.canvasUrl;
+          } else {
+            window.open(res.canvasUrl, '_blank');
+          }
+        } else {
+          if (targetTab) targetTab.close();
+          showToast(res.message || 'Akses ditolak ke tool ini.', true);
+        }
+      } catch (err) {
+        if (targetTab) targetTab.close();
+        showToast('Gagal memverifikasi izin: ' + err.message, true);
+      }
+    }
+
+    async function loadAdminUsers() {
+      try {
+        const res = await callApi('adminGetUsers', { token: sessionToken });
+        if (res.success) {
+          adminUsersCache = res.users;
+          const tbody = document.getElementById('adminUsersTableBody');
+          tbody.innerHTML = '';
+          
+          res.users.forEach(u => {
+            const tr = document.createElement('tr');
+            const isSelf = u.userId === currentUser.userId;
+            tr.innerHTML = `
+              <td><strong>${escapeHtml(u.name)}</strong></td>
+              <td>${escapeHtml(u.email)}</td>
+              <td><span class="badge ${u.role === 'admin' ? 'badge-success' : 'badge-secondary'}">${u.role}</span></td>
+              <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
+              <td>
+                ${!isSelf ? `
+                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${u.userId}', '${u.status === 'active' ? 'inactive' : 'active'}')">
+                    ${u.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}
+                  </button>
+                ` : '<span style="font-size:12px; color:var(--text-muted)">Akun Anda</span>'}
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Gagal memuat users: ' + err.message, true);
+      }
+    }
+
+    function openUserModal() {
+      document.getElementById('modalUserName').value = '';
+      document.getElementById('modalUserEmail').value = '';
+      document.getElementById('modalUserPassword').value = '';
+      document.getElementById('modalUserRole').value = 'user';
+      document.getElementById('userModal').classList.remove('hidden');
+    }
+
+    function closeUserModal() {
+      document.getElementById('userModal').classList.add('hidden');
+    }
+
+    async function submitUserForm() {
+      const name = document.getElementById('modalUserName').value;
+      const email = document.getElementById('modalUserEmail').value;
+      const pass = document.getElementById('modalUserPassword').value;
+      const role = document.getElementById('modalUserRole').value;
+
+      if (!name || !email || !pass) {
+        showToast('Semua kolom wajib diisi!', true);
+        return;
+      }
+
+      try {
+        const res = await callApi('adminCreateUser', { token: sessionToken, name: name, email: email, password: pass, role: role });
+        if (res.success) {
+          showToast(res.message);
+          closeUserModal();
+          loadAdminUsers();
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Gagal membuat user: ' + err.message, true);
+      }
+    }
+
+    async function toggleUserStatus(userId, newStatus) {
+      try {
+        const res = await callApi('adminUpdateUser', { token: sessionToken, targetUserId: userId, newStatus: newStatus });
+        if (res.success) {
+          showToast(res.message);
+          loadAdminUsers();
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Gagal mengubah status: ' + err.message, true);
+      }
+    }
+
+    async function loadAdminTools() {
+      try {
+        const res = await callApi('adminGetTools', { token: sessionToken });
+        if (res.success) {
+          adminToolsCache = res.tools;
+          const tbody = document.getElementById('adminToolsTableBody');
+          tbody.innerHTML = '';
+          
+          res.tools.forEach(t => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="font-size:20px;">${t.icon}</td>
+              <td><strong>${escapeHtml(t.name)}</strong></td>
+              <td><code>${escapeHtml(t.slug)}</code></td>
+              <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
+              <td>
+                <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="editToolModal('${t.toolId}')">Edit</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Gagal memuat tools: ' + err.message, true);
+      }
+    }
+
+    function openToolModal() {
+      document.getElementById('modalToolTitle').innerText = 'Tambah Tool Baru';
+      document.getElementById('modalToolId').value = '';
+      document.getElementById('modalToolName').value = '';
+      document.getElementById('modalToolSlug').value = '';
+      document.getElementById('modalToolIcon').value = '🛠️';
+      document.getElementById('modalToolDesc').value = '';
+      document.getElementById('modalToolUrl').value = '';
+      document.getElementById('modalToolActive').checked = true;
+      document.getElementById('toolModal').classList.remove('hidden');
+    }
+
+    function editToolModal(toolId) {
+      const tool = adminToolsCache.find(t => t.toolId === toolId);
+      if (!tool) return;
+      document.getElementById('modalToolTitle').innerText = 'Edit Tool Canvas';
+      document.getElementById('modalToolId').value = tool.toolId;
+      document.getElementById('modalToolName').value = tool.name;
+      document.getElementById('modalToolSlug').value = tool.slug;
+      document.getElementById('modalToolIcon').value = tool.icon;
+      document.getElementById('modalToolDesc').value = tool.description;
+      document.getElementById('modalToolUrl').value = tool.canvasUrl;
+      document.getElementById('modalToolActive').checked = tool.active;
+      document.getElementById('toolModal').classList.remove('hidden');
+    }
+
+    function closeToolModal() {
+      document.getElementById('toolModal').classList.add('hidden');
+    }
+
+    async function submitToolForm() {
+      const toolData = {
+        toolId: document.getElementById('modalToolId').value,
+        name: document.getElementById('modalToolName').value,
+        slug: document.getElementById('modalToolSlug').value,
+        icon: document.getElementById('modalToolIcon').value,
+        description: document.getElementById('modalToolDesc').value,
+        canvasUrl: document.getElementById('modalToolUrl').value,
+        active: document.getElementById('modalToolActive').checked
+      };
+
+      if (!toolData.name || !toolData.canvasUrl) {
+        showToast('Nama Tool dan Canvas URL wajib diisi!', true);
+        return;
+      }
+
+      try {
+        const res = await callApi('adminSaveTool', { token: sessionToken, toolData: toolData });
+        if (res.success) {
+          showToast(res.message);
+          closeToolModal();
+          loadAdminTools();
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Gagal menyimpan tool: ' + err.message, true);
+      }
+    }
+
+    let currentPermissionsCache = [];
+
+    async function loadAdminPermissionsData() {
+      try {
+        const resUsers = await callApi('adminGetUsers', { token: sessionToken });
+        if (resUsers.success) {
+          adminUsersCache = resUsers.users;
+          const select = document.getElementById('permUserSelect');
+          select.innerHTML = '<option value="">-- Pilih User --</option>';
+          resUsers.users.forEach(u => {
+            select.innerHTML += `<option value="${u.userId}">${escapeHtml(u.name)} (${escapeHtml(u.email)})</option>`;
+          });
+
+          const resTools = await callApi('adminGetTools', { token: sessionToken });
+          if (resTools.success) {
+            adminToolsCache = resTools.tools;
+            const resPerms = await callApi('adminGetPermissions', { token: sessionToken });
+            if (resPerms.success) {
+              currentPermissionsCache = resPerms.permissions;
+            }
+          }
+        }
+      } catch (err) {
+        showToast('Gagal memuat data permissions: ' + err.message, true);
+      }
+    }
+
+    function loadUserPermissionCheckboxes() {
+      const selectedUserId = document.getElementById('permUserSelect').value;
+      const container = document.getElementById('permToolsCheckboxContainer');
+      container.innerHTML = '';
+
+      if (!selectedUserId) return;
+
+      adminToolsCache.forEach(tool => {
+        const hasPerm = currentPermissionsCache.some(p => p.userId === selectedUserId && p.toolId === tool.toolId && p.active);
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.gap = '8px';
+        div.innerHTML = `
+          <input type="checkbox" id="perm_tool_${tool.toolId}" value="${tool.toolId}" ${hasPerm ? 'checked' : ''} style="width: 18px; height: 18px;">
+          <label for="perm_tool_${tool.toolId}">${tool.icon} <strong>${escapeHtml(tool.name)}</strong></label>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function saveUserPermissions() {
+      const selectedUserId = document.getElementById('permUserSelect').value;
+      if (!selectedUserId) {
+        showToast('Silakan pilih user terlebih dahulu.', true);
+        return;
+      }
+
+      const selectedToolIds = [];
+      adminToolsCache.forEach(tool => {
+        const chk = document.getElementById('perm_tool_' + tool.toolId);
+        if (chk && chk.checked) {
+          selectedToolIds.push(tool.toolId);
+        }
+      });
+
+      try {
+        const res = await callApi('adminSavePermissions', { token: sessionToken, targetUserId: selectedUserId, selectedToolIds: selectedToolIds });
+        if (res.success) {
+          showToast(res.message);
+          loadAdminPermissionsData();
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Gagal menyimpan permissions: ' + err.message, true);
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
