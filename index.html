@@ -655,7 +655,7 @@
               <label>Role Status</label>
               <input type="text" id="profRole" class="form-control" readonly>
             </div>
-            <div class="form-group" style="margin-top:20px;">
+            <div id="profApiUrlContainer" class="form-group hidden" style="margin-top:20px;">
               <label>Backend Apps Script Endpoint URL</label>
               <input type="text" id="profApiUrl" class="form-control" placeholder="https://script.google.com/macros/s/..." readonly>
               <button class="btn btn-secondary" style="margin-top:8px; font-size:12px;" onclick="promptApiUrl()">Ubah Endpoint Backend</button>
@@ -1006,7 +1006,14 @@
         document.getElementById('profName').value = currentUser.name;
         document.getElementById('profEmail').value = currentUser.email;
         document.getElementById('profRole').value = currentUser.role;
-        document.getElementById('profApiUrl').value = backendUrl;
+
+        const apiContainer = document.getElementById('profApiUrlContainer');
+        if (currentUser && currentUser.role === 'admin') {
+          apiContainer.classList.remove('hidden');
+          document.getElementById('profApiUrl').value = backendUrl;
+        } else {
+          apiContainer.classList.add('hidden');
+        }
       } else if (page === 'adminUsers') {
         document.getElementById('pageAdminUsers').classList.remove('hidden');
         document.getElementById('navAdminUsers').classList.add('active');
