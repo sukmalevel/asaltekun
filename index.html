@@ -153,6 +153,16 @@
       background: var(--primary-hover);
     }
 
+    .btn-buy {
+      background: #f59e0b;
+      color: white;
+      width: 100%;
+    }
+
+    .btn-buy:hover {
+      background: #d97706;
+    }
+
     .btn-secondary {
       background: #f1f5f9;
       color: var(--text-main);
@@ -393,12 +403,18 @@
       display: flex;
       flex-direction: column;
       transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
     }
 
     .tool-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
       border-color: #cbd5e1;
+    }
+
+    .tool-card.locked {
+      background: #fdfefe;
+      border-style: dashed;
     }
 
     .tool-icon {
@@ -452,13 +468,14 @@
       display: inline-block;
       padding: 4px 10px;
       border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 700;
     }
 
     .badge-success { background: #dcfce7; color: #15803d; }
     .badge-secondary { background: #f1f5f9; color: #475569; }
     .badge-danger { background: #fee2e2; color: #b91c1c; }
+    .badge-warning { background: #fef3c7; color: #b45309; }
 
     .toast-container {
       position: fixed;
@@ -523,7 +540,7 @@
     <div class="auth-card">
       <div class="brand-logo">
         <h1>AsalTekun<span>.id</span></h1>
-        <p class="brand-subtitle">Portal Exclusive Member Canvas Tools</p>
+        <p class="brand-subtitle">Portal Exclusive Member Tools Digital</p>
       </div>
 
       <!-- API URL CONFIG CHECKER -->
@@ -549,7 +566,7 @@
         <button type="submit" id="loginSubmitBtn" class="btn btn-primary">Masuk ke Dashboard</button>
       </form>
 
-      <!-- SOCIAL MEDIA LINKS & WATERMARK FOOTER -->
+      <!-- SOCIAL MEDIA LINKS & FOOTER -->
       <div class="social-footer">
         <div class="social-links">
           <a href="https://www.instagram.com/asaltekun" target="_blank" rel="noopener" class="social-btn">
@@ -581,7 +598,7 @@
           <span>🏠</span> Dashboard
         </a>
         <a class="nav-item" id="navTools" onclick="switchPage('tools')">
-          <span>🛠️</span> Tools Saya
+          <span>🛠️</span> Katalog Tools
         </a>
         <a class="nav-item" id="navProfile" onclick="switchPage('profile')">
           <span>👤</span> Profil Akun
@@ -628,14 +645,14 @@
         <!-- PAGE: DASHBOARD HOME -->
         <div id="pageDashboard" class="page-section">
           <h2 class="page-title" id="welcomeHeading">Selamat Datang!</h2>
-          <p class="page-desc">Pilih dan jalankan tool Gemini Canvas eksklusif Anda di bawah ini.</p>
+          <p class="page-desc">Eksplorasi seluruh katalog tool eksklusif AsalTekun.id di bawah ini.</p>
           <div id="dashboardToolsGrid" class="tools-grid"></div>
         </div>
 
         <!-- PAGE: TOOLS LIST -->
         <div id="pageTools" class="page-section hidden">
-          <h2 class="page-title">Tools Anda</h2>
-          <p class="page-desc">Daftar seluruh tool eksklusif yang aktif untuk akun Anda.</p>
+          <h2 class="page-title">Katalog Tools Eksklusif</h2>
+          <p class="page-desc">Daftar seluruh tool digital yang tersedia di platform AsalTekun.id.</p>
           <div id="toolsListGrid" class="tools-grid"></div>
         </div>
 
@@ -689,7 +706,7 @@
         <!-- PAGE: ADMIN TOOLS -->
         <div id="pageAdminTools" class="page-section hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 class="page-title" style="margin:0;">Kelola Tools Canvas</h2>
+            <h2 class="page-title" style="margin:0;">Kelola Tools Eksklusif</h2>
             <button class="btn btn-primary" onclick="openToolModal()">+ Tambah Tool</button>
           </div>
           
@@ -712,7 +729,7 @@
         <!-- PAGE: ADMIN PERMISSIONS -->
         <div id="pageAdminPerms" class="page-section hidden">
           <h2 class="page-title">Kelola Hak Akses Tools</h2>
-          <p class="page-desc">Pilih user dan centang tool yang diberikan akses.</p>
+          <p class="page-desc">Pilih user dan centang tool eksklusif yang diberikan akses.</p>
 
           <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); max-width: 600px;">
             <div class="form-group">
@@ -738,7 +755,7 @@
   <!-- MODAL EDIT/ADD TOOL -->
   <div id="toolModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
     <div class="auth-card" style="max-width: 500px;">
-      <h3 id="modalToolTitle" style="margin-bottom: 16px;">Form Tool Canvas</h3>
+      <h3 id="modalToolTitle" style="margin-bottom: 16px;">Form Tool Eksklusif</h3>
       <input type="hidden" id="modalToolId">
       <div class="form-group">
         <label>Nama Tool</label>
@@ -757,8 +774,12 @@
         <textarea id="modalToolDesc" class="form-control" rows="2" placeholder="Deskripsi singkat mengenai tool..."></textarea>
       </div>
       <div class="form-group">
-        <label>Canvas URL (Link Gemini Canvas)</label>
+        <label>URL / Endpoint Tool Eksklusif</label>
         <input type="url" id="modalToolUrl" class="form-control" placeholder="https://..." required>
+      </div>
+      <div class="form-group">
+        <label>Link Pembelian / Checkout URL (Jika Belum Dimiliki)</label>
+        <input type="url" id="modalToolBuyUrl" class="form-control" placeholder="https://asaltekun.id/checkout/...">
       </div>
       <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
         <input type="checkbox" id="modalToolActive" checked style="width: 18px; height: 18px;">
@@ -814,9 +835,6 @@
     let adminUsersCache = [];
     let adminToolsCache = [];
 
-    /**
-     * Resilient HTTP Fetch Client for Google Apps Script API Endpoint
-     */
     async function callApi(action, payload = {}) {
       if (!backendUrl) {
         showToast('Apps Script Backend URL belum dikonfigurasi!', true);
@@ -830,7 +848,7 @@
         const response = await fetch(backendUrl, {
           method: 'POST',
           headers: {
-            'Content-Type': 'text/plain;charset=utf-8' // Prevents CORS preflight issue with Apps Script
+            'Content-Type': 'text/plain;charset=utf-8'
           },
           body: JSON.stringify(bodyData)
         });
@@ -1057,7 +1075,7 @@
       const toolsContainer = document.getElementById('toolsListGrid');
       
       if (!userTools || userTools.length === 0) {
-        const emptyState = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-muted); background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">Belum ada tool yang diberikan kepada Anda. Hubungi Administrator.</div>';
+        const emptyState = '<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-muted); background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);">Belum ada tool eksklusif yang tersedia di platform.</div>';
         dashContainer.innerHTML = emptyState;
         toolsContainer.innerHTML = emptyState;
         return;
@@ -1065,12 +1083,22 @@
 
       let cardsHtml = '';
       userTools.forEach(t => {
+        const isOwned = t.hasAccess;
         cardsHtml += `
-          <div class="tool-card">
-            <div class="tool-icon">${t.icon || '🔧'}</div>
+          <div class="tool-card ${isOwned ? '' : 'locked'}">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="tool-icon" style="margin: 0;">${t.icon || '🔧'}</div>
+              <span class="badge ${isOwned ? 'badge-success' : 'badge-warning'}">
+                ${isOwned ? '✓ Akses Aktif' : '🔒 Belum Dimiliki'}
+              </span>
+            </div>
             <div class="tool-title">${escapeHtml(t.name)}</div>
             <div class="tool-description">${escapeHtml(t.description || 'Tidak ada deskripsi.')}</div>
-            <button class="btn btn-primary" onclick="launchToolDirect('${t.toolId}')">🚀 Buka Tool</button>
+            ${isOwned ? `
+              <button class="btn btn-primary" onclick="launchToolDirect('${t.toolId}')">🚀 Buka Tool</button>
+            ` : `
+              <button class="btn btn-buy" onclick="redirectToPurchase('${t.buyUrl}')">🛒 Dapatkan Akses</button>
+            `}
           </div>
         `;
       });
@@ -1079,11 +1107,18 @@
       toolsContainer.innerHTML = cardsHtml;
     }
 
+    function redirectToPurchase(buyUrl) {
+      if (buyUrl && buyUrl.trim() !== '') {
+        window.open(buyUrl, '_blank');
+      } else {
+        showToast('Hubungi Administrator AsalTekun.id untuk membeli akses tool ini.');
+      }
+    }
+
     /**
-     * SECURE TOOL LAUNCHER WITH SERVER PERMISSION VALIDATION
+     * SECURE DIRECT TOOL LAUNCHER WITH SERVER PERMISSION VALIDATION
      */
     async function launchToolDirect(toolId) {
-      // Immediate tab launch context to prevent browser popup block
       const targetTab = window.open('about:blank', '_blank');
       if (targetTab) {
         targetTab.document.write(`
@@ -1091,7 +1126,7 @@
             <div style="border: 4px solid #a7f3d0; border-left-color: #059669; border-radius: 50%; width: 44px; height: 44px; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
             <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
             <h2 style="margin-bottom:8px;">AsalTekun.id</h2>
-            <p style="font-size:14px; color:#047857;">Memverifikasi hak akses & mengalihkan ke Gemini Canvas...</p>
+            <p style="font-size:14px; color:#047857;">Memverifikasi hak akses & mengalihkan ke Tool Eksklusif...</p>
           </div>
         `);
       }
@@ -1232,13 +1267,14 @@
     }
 
     function openToolModal() {
-      document.getElementById('modalToolTitle').innerText = 'Tambah Tool Baru';
+      document.getElementById('modalToolTitle').innerText = 'Tambah Tool Eksklusif';
       document.getElementById('modalToolId').value = '';
       document.getElementById('modalToolName').value = '';
       document.getElementById('modalToolSlug').value = '';
       document.getElementById('modalToolIcon').value = '🛠️';
       document.getElementById('modalToolDesc').value = '';
       document.getElementById('modalToolUrl').value = '';
+      document.getElementById('modalToolBuyUrl').value = '';
       document.getElementById('modalToolActive').checked = true;
       document.getElementById('toolModal').classList.remove('hidden');
     }
@@ -1246,13 +1282,14 @@
     function editToolModal(toolId) {
       const tool = adminToolsCache.find(t => t.toolId === toolId);
       if (!tool) return;
-      document.getElementById('modalToolTitle').innerText = 'Edit Tool Canvas';
+      document.getElementById('modalToolTitle').innerText = 'Edit Tool Eksklusif';
       document.getElementById('modalToolId').value = tool.toolId;
       document.getElementById('modalToolName').value = tool.name;
       document.getElementById('modalToolSlug').value = tool.slug;
       document.getElementById('modalToolIcon').value = tool.icon;
       document.getElementById('modalToolDesc').value = tool.description;
       document.getElementById('modalToolUrl').value = tool.canvasUrl;
+      document.getElementById('modalToolBuyUrl').value = tool.buyUrl || '';
       document.getElementById('modalToolActive').checked = tool.active;
       document.getElementById('toolModal').classList.remove('hidden');
     }
@@ -1269,11 +1306,12 @@
         icon: document.getElementById('modalToolIcon').value,
         description: document.getElementById('modalToolDesc').value,
         canvasUrl: document.getElementById('modalToolUrl').value,
+        buyUrl: document.getElementById('modalToolBuyUrl').value,
         active: document.getElementById('modalToolActive').checked
       };
 
       if (!toolData.name || !toolData.canvasUrl) {
-        showToast('Nama Tool dan Canvas URL wajib diisi!', true);
+        showToast('Nama Tool dan URL Link wajib diisi!', true);
         return;
       }
 
