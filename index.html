@@ -767,6 +767,10 @@
         <input type="email" id="editUserEmail" class="form-control" readonly style="background:#f1f5f9;">
       </div>
       <div class="form-group">
+        <label>No. HP / WhatsApp</label>
+        <input type="tel" id="editUserPhone" class="form-control" placeholder="08123456789">
+      </div>
+      <div class="form-group">
         <label>Password Baru / Ubah Password</label>
         <div style="position: relative; display: flex; align-items: center;">
           <input type="password" id="editUserPassword" class="form-control" placeholder="Ketik password baru" style="padding-right: 44px;">
@@ -842,20 +846,28 @@
       <h3 style="margin-bottom: 16px;">Tambah User Baru</h3>
       <div class="form-group">
         <label>Nama Lengkap</label>
-        <input type="text" id="modalUserName" class="form-control" placeholder="Nama User" required>
+        <input type="text" id="modalUserName" class="form-control" placeholder="Nama User" oninput="handleNameOrEmailInput()" required>
       </div>
       <div class="form-group">
         <label>Email Registered</label>
-        <input type="email" id="modalUserEmail" class="form-control" placeholder="email@domain.com" required>
+        <input type="email" id="modalUserEmail" class="form-control" placeholder="email@domain.com" oninput="handleNameOrEmailInput()" required>
       </div>
       <div class="form-group">
-        <label>Password</label>
+        <label>No. HP / WhatsApp</label>
+        <input type="tel" id="modalUserPhone" class="form-control" placeholder="08123456789">
+      </div>
+      <div class="form-group">
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Password</span>
+          <button type="button" onclick="generateAutoPassword()" style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; cursor:pointer;">🎲 Auto Generate</button>
+        </label>
         <div style="position: relative; display: flex; align-items: center;">
-          <input type="password" id="modalUserPassword" class="form-control" placeholder="Password" required style="padding-right: 44px;">
+          <input type="password" id="modalUserPassword" class="form-control" placeholder="Password otomatis terisi" oninput="markPasswordAsCustom()" required style="padding-right: 44px;">
           <button type="button" onclick="togglePasswordVisibility('modalUserPassword', 'addEyeIcon')" title="Tampilkan/Sembunyikan Password" style="position: absolute; right: 8px; background: transparent; border: none; cursor: pointer; padding: 6px; font-size: 16px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
             <span id="addEyeIcon">👁️</span>
           </button>
         </div>
+        <small style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Password terisi otomatis berdasarkan nama/email, dan tetap bisa Anda edit bebas.</small>
       </div>
       <div class="form-group">
         <label>Role</label>
@@ -1059,9 +1071,11 @@
       if (page === 'dashboard') {
         document.getElementById('pageDashboard').classList.remove('hidden');
         document.getElementById('navDashboard').classList.add('active');
+        loadUserTools();
       } else if (page === 'tools') {
         document.getElementById('pageTools').classList.remove('hidden');
         document.getElementById('navTools').classList.add('active');
+        loadUserTools();
       } else if (page === 'profile') {
         document.getElementById('pageProfile').classList.remove('hidden');
         document.getElementById('navProfile').classList.add('active');
@@ -1139,60 +1153,44 @@
             <div class="tool-title">${escapeHtml(t.name)}</div>
             <div class="tool-description">${escapeHtml(t.description || 'Tidak ada deskripsi.')}</div>
             ${isOwned ? `
-              <button class="btn btn-primary" onclick="launchToolDirect('${t.toolId}')">🚀 Buka Tool</button>
-            ` : `
-              <button class="btn btn-buy" onclick="redirectToPurchase('${t.buyUrl}')">🛒 Dapatkan Akses</button>
-            `}
-          </div>
-        `;
-      });
+    let isPasswordManuallyEdited = false;
 
-      dashContainer.innerHTML = cardsHtml;
-      toolsContainer.innerHTML = cardsHtml;
+    function markPasswordAsCustom() {
+      isPasswordManuallyEdited = true;
     }
 
-    function redirectToPurchase(buyUrl) {
-      if (buyUrl && buyUrl.trim() !== '') {
-        window.open(buyUrl, '_blank');
-      } else {
-        showToast('Hubungi Administrator AsalTekun.id untuk membeli akses tool ini.');
-      }
-    }
-
-    /**
-     * SECURE DIRECT TOOL LAUNCHER WITH SERVER PERMISSION VALIDATION
-     */
-    async function launchToolDirect(toolId) {
-      const targetTab = window.open('about:blank', '_blank');
-      if (targetTab) {
-        targetTab.document.write(`
-          <div style="font-family:'Plus Jakarta Sans',sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; color:#064e3b; background:#ecfdf5; text-align:center; padding:20px;">
-            <div style="border: 4px solid #a7f3d0; border-left-color: #059669; border-radius: 50%; width: 44px; height: 44px; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
-            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-            <h2 style="margin-bottom:8px;">AsalTekun.id</h2>
-            <p style="font-size:14px; color:#047857;">Memverifikasi hak akses & mengalihkan ke Tool Eksklusif...</p>
-          </div>
-        `);
-      }
-
-      showToast('Memverifikasi izin akses server...');
-
-      try {
-        const res = await callApi('getToolUrl', { token: sessionToken, toolId: String(toolId) });
-        if (res.success && res.canvasUrl) {
-          showToast('Izin terverifikasi! Mengalihkan ke ' + res.name);
-          if (targetTab) {
-            targetTab.location.href = res.canvasUrl;
-          } else {
-            window.open(res.canvasUrl, '_blank');
-          }
-        } else {
-          if (targetTab) targetTab.close();
-          showToast(res.message || 'Akses ditolak ke tool ini.', true);
+    function generateAutoPassword() {
+      const nameInput = document.getElementById('modalUserName').value.trim();
+      const emailInput = document.getElementById('modalUserEmail').value.trim();
+      
+      let baseName = '';
+      if (nameInput) {
+        const firstWord = nameInput.split(' ')[0].replace(/[^a-zA-Z0-9]/g, '');
+        if (firstWord) {
+          baseName = firstWord.charAt(0).toUpperCase() + firstWord.slice(1).toLowerCase();
         }
-      } catch (err) {
-        if (targetTab) targetTab.close();
-        showToast('Gagal memverifikasi izin: ' + err.message, true);
+      }
+      
+      if (!baseName && emailInput) {
+        const emailPrefix = emailInput.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+        if (emailPrefix) {
+          baseName = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1).toLowerCase();
+        }
+      }
+      
+      if (!baseName) {
+        baseName = 'Member';
+      }
+
+      const randomNum = Math.floor(100 + Math.random() * 900);
+      const generated = baseName + randomNum + '!';
+      
+      document.getElementById('modalUserPassword').value = generated;
+    }
+
+    function handleNameOrEmailInput() {
+      if (!isPasswordManuallyEdited) {
+        generateAutoPassword();
       }
     }
 
@@ -1208,7 +1206,10 @@
             const tr = document.createElement('tr');
             const isSelf = String(u.userId).trim() === String(currentUser.userId).trim();
             tr.innerHTML = `
-              <td><strong>${escapeHtml(u.name)}</strong></td>
+              <td>
+                <strong>${escapeHtml(u.name)}</strong>
+                ${u.phone ? `<br><small style="color:var(--text-muted); font-size:11px;">📱 ${escapeHtml(u.phone)}</small>` : ''}
+              </td>
               <td>${escapeHtml(u.email)}</td>
               <td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#0f172a;">${escapeHtml(u.password)}</code></td>
               <td><span class="badge ${u.role === 'admin' ? 'badge-success' : 'badge-secondary'}">${u.role}</span></td>
@@ -1244,6 +1245,7 @@
       document.getElementById('editUserId').value = user.userId;
       document.getElementById('editUserName').value = user.name;
       document.getElementById('editUserEmail').value = user.email;
+      document.getElementById('editUserPhone').value = user.phone || '';
       document.getElementById('editUserPassword').value = user.password || '';
       document.getElementById('editUserRole').value = user.role || 'user';
       document.getElementById('editUserStatus').value = user.status || 'active';
@@ -1256,6 +1258,7 @@
 
     async function submitEditUserForm() {
       const userId = document.getElementById('editUserId').value;
+      const newPhone = document.getElementById('editUserPhone').value;
       const newPass = document.getElementById('editUserPassword').value;
       const newRole = document.getElementById('editUserRole').value;
       const newStatus = document.getElementById('editUserStatus').value;
@@ -1270,7 +1273,8 @@
           targetUserId: userId, 
           newStatus: newStatus, 
           newRole: newRole,
-          newPassword: newPass 
+          newPassword: newPass,
+          phone: newPhone
         });
         btn.disabled = false;
         btn.innerText = 'Simpan Perubahan';
@@ -1290,8 +1294,10 @@
     }
 
     function openUserModal() {
+      isPasswordManuallyEdited = false;
       document.getElementById('modalUserName').value = '';
       document.getElementById('modalUserEmail').value = '';
+      document.getElementById('modalUserPhone').value = '';
       document.getElementById('modalUserPassword').value = '';
       document.getElementById('modalUserRole').value = 'user';
       document.getElementById('userModal').classList.remove('hidden');
@@ -1304,12 +1310,13 @@
     async function submitUserForm() {
       const name = document.getElementById('modalUserName').value;
       const email = document.getElementById('modalUserEmail').value;
+      const phone = document.getElementById('modalUserPhone').value;
       const pass = document.getElementById('modalUserPassword').value;
       const role = document.getElementById('modalUserRole').value;
       const btn = document.getElementById('btnSubmitAddUser');
 
       if (!name || !email || !pass) {
-        showToast('Semua kolom wajib diisi!', true);
+        showToast('Nama, Email, dan Password wajib diisi!', true);
         return;
       }
 
@@ -1317,7 +1324,14 @@
       btn.innerText = 'Memproses...';
 
       try {
-        const res = await callApi('adminCreateUser', { token: sessionToken, name: name, email: email, password: pass, role: role });
+        const res = await callApi('adminCreateUser', { 
+          token: sessionToken, 
+          name: name, 
+          email: email, 
+          password: pass, 
+          role: role,
+          phone: phone
+        });
         btn.disabled = false;
         btn.innerText = 'Buat User';
 
@@ -1444,6 +1458,7 @@
           showToast(res.message);
           closeToolModal();
           loadAdminTools();
+          loadUserTools();
         } else {
           showToast(res.message, true);
         }
