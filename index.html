@@ -683,9 +683,12 @@
 
         <!-- PAGE: ADMIN USERS -->
         <div id="pageAdminUsers" class="page-section hidden">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <h2 class="page-title" style="margin:0;">Kelola Users</h2>
-            <button class="btn btn-primary" style="width: auto;" onclick="openUserModal()">+ Tambah User</button>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-secondary" style="width: auto; background: #064e3b; color: white;" onclick="openBulkUserModal()">📋 Impor Banyak User</button>
+              <button class="btn btn-primary" style="width: auto;" onclick="openUserModal()">+ Tambah User</button>
+            </div>
           </div>
 
           <div class="admin-table-container">
@@ -880,6 +883,29 @@
       <div style="display: flex; gap: 10px; margin-top: 20px;">
         <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeUserModal()">Batal</button>
         <button type="button" id="btnSubmitAddUser" class="btn btn-primary" style="flex:1;" onclick="submitUserForm()">Buat User</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL BULK ADD USERS -->
+  <div id="bulkUserModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
+    <div class="auth-card" style="max-width: 580px;">
+      <h3 style="margin-bottom: 12px;">Impor Banyak User sekaligus</h3>
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5;">
+        Copy-paste data user dari <strong>Excel / Google Sheets / Catatan Teks</strong>.<br>
+        Format per baris: <code>Nama, Email, No. HP</code> (atau pisahkan dengan Tab/Garis Tegak <code>|</code>).
+      </p>
+
+      <div class="form-group">
+        <label>Data Raw User (1 Baris = 1 User)</label>
+        <textarea id="bulkUserTextarea" class="form-control" rows="8" placeholder="Contoh format:&#10;Budi Santoso, budi@email.com, 08123456789&#10;Siti Aminah, siti@email.com, 08987654321&#10;&#10;(Password akan otomatis dibuatkan per user)"></textarea>
+      </div>
+
+      <div id="bulkPreviewInfo" style="font-size: 12px; color: var(--primary-dark); font-weight: 600; margin-bottom: 16px;"></div>
+
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeBulkUserModal()">Batal</button>
+        <button type="button" id="btnSubmitBulkUser" class="btn btn-primary" style="flex:1;" onclick="submitBulkUserForm()">Impor Sekarang</button>
       </div>
     </div>
   </div>
@@ -1355,6 +1381,83 @@
 
     function closeUserModal() {
       document.getElementById('userModal').classList.add('hidden');
+    }
+
+    function openBulkUserModal() {
+      document.getElementById('bulkUserTextarea').value = '';
+      document.getElementById('bulkPreviewInfo').innerText = '';
+      document.getElementById('bulkUserModal').classList.remove('hidden');
+    }
+
+    function closeBulkUserModal() {
+      document.getElementById('bulkUserModal').classList.add('hidden');
+    }
+
+    function parseBulkText(rawText) {
+      const lines = rawText.split('\n');
+      const users = [];
+
+      lines.forEach(line => {
+        const clean = line.trim();
+        if (!clean) return;
+
+        let parts = [];
+        if (clean.includes('\t')) {
+          parts = clean.split('\t');
+        } else if (clean.includes('|')) {
+          parts = clean.split('|');
+        } else if (clean.includes(',')) {
+          parts = clean.split(',');
+        } else {
+          parts = clean.split(/\s+/);
+        }
+
+        parts = parts.map(p => p.trim()).filter(p => p !== '');
+
+        if (parts.length >= 2) {
+          const name = parts[0];
+          const email = parts[1];
+          const phone = parts[2] || '';
+          
+          if (email.includes('@')) {
+            users.push({ name: name, email: email, phone: phone });
+          }
+        }
+      });
+
+      return users;
+    }
+
+    async function submitBulkUserForm() {
+      const rawText = document.getElementById('bulkUserTextarea').value;
+      const parsedUsers = parseBulkText(rawText);
+      const btn = document.getElementById('btnSubmitBulkUser');
+
+      if (parsedUsers.length === 0) {
+        showToast('Tidak ada data valid yang terdeteksi. Cek format penulisan.', true);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'Memproses ' + parsedUsers.length + ' data...';
+
+      try {
+        const res = await callApi('adminBulkCreateUsers', { token: sessionToken, usersList: parsedUsers });
+        btn.disabled = false;
+        btn.innerText = 'Impor Sekarang';
+
+        if (res.success) {
+          showToast(res.message);
+          closeBulkUserModal();
+          loadAdminUsers();
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerText = 'Impor Sekarang';
+        showToast('Gagal impor user: ' + err.message, true);
+      }
     }
 
     async function submitUserForm() {
