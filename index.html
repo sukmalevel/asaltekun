@@ -927,7 +927,7 @@
 
     // Safe HTML Escaper to prevent XSS and undefined errors
     function escapeHtml(str) {
-      if (str === null || str === undefined) return '';
+      if (str === null || str === undefined || str === 'undefined') return '';
       return String(str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -1020,21 +1020,28 @@
       document.getElementById('appView').classList.add('hidden');
     }
 
-    function showAppView() {
+    function showAppView(skipLoadTools = false) {
       document.getElementById('authView').classList.add('hidden');
       document.getElementById('appView').classList.remove('hidden');
       
-      document.getElementById('userNameLabel').innerText = currentUser.name;
-      document.getElementById('userRoleLabel').innerText = currentUser.role;
-      document.getElementById('userAvatar').innerText = currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U';
+      const userName = (currentUser && currentUser.name) ? currentUser.name : 'User';
+      const userRole = (currentUser && currentUser.role) ? currentUser.role : 'Member';
 
-      if (String(currentUser.role).toLowerCase() === 'admin') {
+      document.getElementById('userNameLabel').innerText = userName;
+      document.getElementById('userRoleLabel').innerText = userRole;
+      document.getElementById('userAvatar').innerText = userName ? userName.charAt(0).toUpperCase() : 'U';
+
+      if (String(userRole).toLowerCase() === 'admin') {
         document.getElementById('adminNavSection').classList.remove('hidden');
       } else {
         document.getElementById('adminNavSection').classList.add('hidden');
       }
 
-      loadUserTools();
+      if (skipLoadTools) {
+        renderToolsGrid();
+      } else {
+        loadUserTools();
+      }
     }
 
     async function handleLogin(e) {
@@ -1065,8 +1072,9 @@
           sessionToken = res.token;
           localStorage.setItem('asaltekun_token', res.token);
           currentUser = res.user;
-          showToast('Selamat datang kembali, ' + res.user.name + '!');
-          showAppView();
+          userTools = res.tools || [];
+          showToast('Selamat datang kembali, ' + (currentUser.name || 'Member') + '!');
+          showAppView(true);
         } else {
           showToast(res.message || 'Login gagal.', true);
         }
@@ -1083,7 +1091,7 @@
         if (res.success) {
           currentUser = res.user;
           userTools = res.tools || [];
-          showAppView();
+          showAppView(true);
         } else {
           localStorage.removeItem('asaltekun_token');
           sessionToken = null;
@@ -1116,17 +1124,17 @@
       if (page === 'dashboard') {
         document.getElementById('pageDashboard').classList.remove('hidden');
         document.getElementById('navDashboard').classList.add('active');
-        loadUserTools();
+        renderToolsGrid();
       } else if (page === 'tools') {
         document.getElementById('pageTools').classList.remove('hidden');
         document.getElementById('navTools').classList.add('active');
-        loadUserTools();
+        renderToolsGrid();
       } else if (page === 'profile') {
         document.getElementById('pageProfile').classList.remove('hidden');
         document.getElementById('navProfile').classList.add('active');
-        document.getElementById('profName').value = currentUser.name;
-        document.getElementById('profEmail').value = currentUser.email;
-        document.getElementById('profRole').value = currentUser.role;
+        document.getElementById('profName').value = currentUser ? (currentUser.name || '') : '';
+        document.getElementById('profEmail').value = currentUser ? (currentUser.email || '') : '';
+        document.getElementById('profRole').value = currentUser ? (currentUser.role || '') : '';
 
         const apiContainer = document.getElementById('profApiUrlContainer');
         if (currentUser && String(currentUser.role).toLowerCase() === 'admin') {
@@ -1161,7 +1169,7 @@
         const res = await callApi('getUserTools', { token: sessionToken });
         if (res.success) {
           currentUser = res.user;
-          userTools = res.tools;
+          userTools = res.tools || [];
           renderToolsGrid();
         } else {
           showToast(res.message, true);
@@ -1172,7 +1180,8 @@
     }
 
     function renderToolsGrid() {
-      document.getElementById('welcomeHeading').innerText = 'Selamat Datang, ' + currentUser.name + '!';
+      const nameToShow = (currentUser && currentUser.name) ? currentUser.name : 'Member';
+      document.getElementById('welcomeHeading').innerText = 'Selamat Datang, ' + nameToShow + '!';
       
       const dashContainer = document.getElementById('dashboardToolsGrid');
       const toolsContainer = document.getElementById('toolsListGrid');
@@ -1195,10 +1204,10 @@
                 ${isOwned ? '✓ Akses Aktif' : '🔒 Belum Dimiliki'}
               </span>
             </div>
-            <div class="tool-title">${escapeHtml(t.name)}</div>
+            <div class="tool-title">${escapeHtml(t.name || 'Tool')}</div>
             <div class="tool-description">${escapeHtml(t.description || 'Tidak ada deskripsi.')}</div>
             ${isOwned ? `
-              <button class="btn btn-primary" onclick="launchTool('${escapeHtml(String(t.toolId))}')">🚀 Buka Tool</button>
+              <button class="btn btn-primary" onclick="launchTool('${escapeHtml(String(t.toolId || ''))}')">🚀 Buka Tool</button>
             ` : `
               ${t.buyUrl ? `
                 <a href="${escapeHtml(t.buyUrl)}" target="_blank" rel="noopener" class="btn btn-buy">🛒 Dapatkan Akses</a>
@@ -1291,9 +1300,9 @@
     function openEditUserModal(userId) {
       const user = adminUsersCache.find(u => String(u.userId).trim() === String(userId).trim());
       if (!user) return;
-      document.getElementById('editUserId').value = user.userId;
-      document.getElementById('editUserName').value = user.name;
-      document.getElementById('editUserEmail').value = user.email;
+      document.getElementById('editUserId').value = user.userId || '';
+      document.getElementById('editUserName').value = user.name || '';
+      document.getElementById('editUserEmail').value = user.email || '';
       document.getElementById('editUserPhone').value = user.phone || '';
       document.getElementById('editUserPassword').value = '';
       document.getElementById('editUserRole').value = user.role || 'user';
@@ -1421,7 +1430,7 @@
         const tool = adminToolsCache.find(t => String(t.toolId).trim() === String(toolId).trim());
         if (tool) {
           document.getElementById('modalToolTitle').innerText = 'Edit Tool Eksklusif';
-          document.getElementById('modalToolId').value = tool.toolId;
+          document.getElementById('modalToolId').value = tool.toolId || '';
           document.getElementById('modalToolName').value = tool.name || '';
           document.getElementById('modalToolSlug').value = tool.slug || '';
           document.getElementById('modalToolIcon').value = tool.icon || '🛠️';
@@ -1503,18 +1512,18 @@
       try {
         const res = await callApi('adminGetTools', { token: sessionToken });
         if (res.success) {
-          adminToolsCache = res.tools;
+          adminToolsCache = res.tools || [];
           const tbody = document.getElementById('adminToolsTableBody');
           tbody.innerHTML = '';
-          res.tools.forEach(t => {
+          adminToolsCache.forEach(t => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
               <td><span style="font-size: 20px;">${t.icon || '🛠️'}</span></td>
-              <td><strong>${escapeHtml(t.name)}</strong><br><small style="color:var(--text-muted);">${escapeHtml(t.description || '')}</small></td>
+              <td><strong>${escapeHtml(t.name || 'Tool')}</strong><br><small style="color:var(--text-muted);">${escapeHtml(t.description || '')}</small></td>
               <td><code>${escapeHtml(t.slug || '')}</code></td>
               <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
               <td>
-                <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="openToolModal('${escapeHtml(String(t.toolId))}')">✏️ Edit</button>
+                <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="openToolModal('${escapeHtml(String(t.toolId || ''))}')">✏️ Edit</button>
               </td>
             `;
             tbody.appendChild(tr);
@@ -1626,31 +1635,31 @@
       try {
         const res = await callApi('adminGetUsers', { token: sessionToken });
         if (res.success) {
-          adminUsersCache = res.users;
+          adminUsersCache = res.users || [];
           const tbody = document.getElementById('adminUsersTableBody');
           tbody.innerHTML = '';
           
-          let totalCount = res.users.length;
+          let totalCount = adminUsersCache.length;
           let activeCount = 0;
 
-          res.users.forEach(u => {
+          adminUsersCache.forEach(u => {
             if (u.status === 'active') activeCount++;
             const tr = document.createElement('tr');
-            const isSelf = String(u.userId).trim() === String(currentUser.userId).trim();
+            const isSelf = currentUser && String(u.userId).trim() === String(currentUser.userId).trim();
             tr.innerHTML = `
               <td>
-                <strong>${escapeHtml(u.name)}</strong>
+                <strong>${escapeHtml(u.name || 'User')}</strong>
                 ${u.phone ? `<br><small style="color:var(--text-muted); font-size:11px;">📱 ${escapeHtml(u.phone)}</small>` : ''}
               </td>
-              <td>${escapeHtml(u.email)}</td>
-              <td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#0f172a;">${escapeHtml(u.password)}</code></td>
-              <td><span class="badge ${u.role === 'admin' ? 'badge-success' : 'badge-secondary'}">${u.role}</span></td>
-              <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
+              <td>${escapeHtml(u.email || '')}</td>
+              <td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#0f172a;">${escapeHtml(u.password || '')}</code></td>
+              <td><span class="badge ${u.role === 'admin' ? 'badge-success' : 'badge-secondary'}">${u.role || 'user'}</span></td>
+              <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status || 'active'}</span></td>
               <td>
                 <div style="display:flex; gap:6px;">
-                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId))}')">✏️ Edit / Pass</button>
+                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId || ''))}')">✏️ Edit / Pass</button>
                   ${!isSelf ? `
-                    <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${escapeHtml(String(u.userId))}', '${u.status === 'active' ? 'inactive' : 'active'}')">
+                    <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${escapeHtml(String(u.userId || ''))}', '${u.status === 'active' ? 'inactive' : 'active'}')">
                       ${u.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}
                     </button>
                   ` : ''}
@@ -1683,12 +1692,12 @@
         ]);
 
         if (resUsers.success && resTools.success && resPerms.success) {
-          adminUsersCache = resUsers.users;
-          adminToolsCache = resTools.tools;
-          currentPermissionsCache = resPerms.permissions;
+          adminUsersCache = resUsers.users || [];
+          adminToolsCache = resTools.tools || [];
+          currentPermissionsCache = resPerms.permissions || [];
 
-          const activeUsers = resUsers.users.filter(u => u.status === 'active').length;
-          document.getElementById('adminPermsCountBadge').innerHTML = `👥 Total Member: <strong>${resUsers.users.length}</strong> | User Aktif: <strong style="color:var(--primary);">${activeUsers}</strong> | Tools Tersedia: <strong>${resTools.tools.length}</strong>`;
+          const activeUsers = adminUsersCache.filter(u => u.status === 'active').length;
+          document.getElementById('adminPermsCountBadge').innerHTML = `👥 Total Member: <strong>${adminUsersCache.length}</strong> | User Aktif: <strong style="color:var(--primary);">${activeUsers}</strong> | Tools Tersedia: <strong>${adminToolsCache.length}</strong>`;
 
           renderPermsMatrixTable();
         } else {
@@ -1720,7 +1729,7 @@
       }
 
       filteredUsers.forEach(user => {
-        const userIdStr = String(user.userId).trim();
+        const userIdStr = String(user.userId || '').trim();
         const tr = document.createElement('tr');
 
         let toolsCheckboxesHtml = '<div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">';
@@ -1729,13 +1738,13 @@
           toolsCheckboxesHtml += '<span style="color:var(--text-muted); font-size:12px;">Belum ada tool tersimpan.</span>';
         } else {
           adminToolsCache.forEach(tool => {
-            const toolIdStr = String(tool.toolId).trim();
-            const hasPerm = currentPermissionsCache.some(p => String(p.userId).trim() === userIdStr && String(p.toolId).trim() === toolIdStr && p.active);
+            const toolIdStr = String(tool.toolId || '').trim();
+            const hasPerm = currentPermissionsCache.some(p => String(p.userId || '').trim() === userIdStr && String(p.toolId || '').trim() === toolIdStr && p.active);
             
             toolsCheckboxesHtml += `
               <label style="display:inline-flex; align-items:center; gap:6px; background:${hasPerm ? '#ecfdf5' : '#f8fafc'}; border:1px solid ${hasPerm ? '#059669' : '#e2e8f0'}; padding:6px 12px; border-radius:20px; cursor:pointer; font-size:12px; font-weight:${hasPerm ? '700' : '500'}; transition:all 0.15s;">
                 <input type="checkbox" class="perm-chk-${userIdStr}" data-toolid="${toolIdStr}" ${hasPerm ? 'checked' : ''} style="accent-color:var(--primary); cursor:pointer;">
-                <span>${tool.icon || '🛠️'} ${escapeHtml(tool.name)}</span>
+                <span>${tool.icon || '🛠️'} ${escapeHtml(tool.name || 'Tool')}</span>
               </label>
             `;
           });
@@ -1744,9 +1753,9 @@
 
         tr.innerHTML = `
           <td>
-            <strong>${escapeHtml(user.name)}</strong>
-            <br><small style="color:var(--text-muted); font-size:12px;">${escapeHtml(user.email)}</small>
-            <br><span class="badge ${user.role === 'admin' ? 'badge-success' : 'badge-secondary'}" style="margin-top:4px;">${user.role}</span>
+            <strong>${escapeHtml(user.name || 'User')}</strong>
+            <br><small style="color:var(--text-muted); font-size:12px;">${escapeHtml(user.email || '')}</small>
+            <br><span class="badge ${user.role === 'admin' ? 'badge-success' : 'badge-secondary'}" style="margin-top:4px;">${user.role || 'user'}</span>
           </td>
           <td>${toolsCheckboxesHtml}</td>
           <td style="vertical-align:middle;">
