@@ -1723,7 +1723,6 @@
         const userIdStr = String(user.userId).trim();
         const tr = document.createElement('tr');
 
-        // Render tool access chips/checkboxes inline
         let toolsCheckboxesHtml = '<div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">';
         
         if (!adminToolsCache || adminToolsCache.length === 0) {
@@ -1787,7 +1786,6 @@
 
         if (res.success) {
           showToast('Akses user berhasil diperbarui!');
-          // Optimistic local update
           selectedToolIds.forEach(tId => {
             let perm = currentPermissionsCache.find(p => String(p.userId).trim() === userIdStr && String(p.toolId).trim() === tId);
             if (perm) {
