@@ -141,6 +141,7 @@
       cursor: pointer;
       transition: all 0.2s;
       gap: 8px;
+      text-decoration: none;
     }
 
     .btn-primary {
@@ -1153,6 +1154,55 @@
             <div class="tool-title">${escapeHtml(t.name)}</div>
             <div class="tool-description">${escapeHtml(t.description || 'Tidak ada deskripsi.')}</div>
             ${isOwned ? `
+              <button class="btn btn-primary" onclick="launchTool('${escapeHtml(String(t.toolId))}')">🚀 Buka Tool</button>
+            ` : `
+              ${t.buyUrl ? `
+                <a href="${escapeHtml(t.buyUrl)}" target="_blank" rel="noopener" class="btn btn-buy">🛒 Dapatkan Akses</a>
+              ` : `
+                <button class="btn btn-secondary" disabled>Hubungi Admin</button>
+              `}
+            `}
+          </div>
+        `;
+      });
+
+      dashContainer.innerHTML = cardsHtml;
+      toolsContainer.innerHTML = cardsHtml;
+    }
+
+    async function launchTool(toolId) {
+      const newTab = window.open('about:blank', '_blank');
+      if (!newTab) {
+        showToast('Popup diblokir oleh browser. Harap izinkan popup.', true);
+        return;
+      }
+      
+      newTab.document.write(`
+        <html>
+          <head><title>Memuat Tool Akses...</title></head>
+          <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background: #f8fafc; color: #0f172a;">
+            <div style="text-align: center;">
+              <h2>Memverifikasi Hak Akses Tool...</h2>
+              <p style="color: #64748b; margin-top: 8px;">Mohon tunggu sebentar.</p>
+            </div>
+          </body>
+        </html>
+      `);
+
+      try {
+        const res = await callApi('getToolUrl', { token: sessionToken, toolId: toolId });
+        if (res.success && res.canvasUrl) {
+          newTab.location.href = res.canvasUrl;
+        } else {
+          newTab.close();
+          showToast(res.message || 'Gagal membuka tool.', true);
+        }
+      } catch (err) {
+        newTab.close();
+        showToast('Error verifikasi hak akses: ' + err.message, true);
+      }
+    }
+
     let isPasswordManuallyEdited = false;
 
     function markPasswordAsCustom() {
