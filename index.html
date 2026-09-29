@@ -684,7 +684,10 @@
         <!-- PAGE: ADMIN USERS -->
         <div id="pageAdminUsers" class="page-section hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-            <h2 class="page-title" style="margin:0;">Kelola Users</h2>
+            <div>
+              <h2 class="page-title" style="margin:0;">Kelola Users</h2>
+              <div id="adminUsersCountBadge" style="font-size: 13px; color: var(--text-muted); margin-top: 4px; font-weight: 600;">Loading data user...</div>
+            </div>
             <div style="display: flex; gap: 10px;">
               <button class="btn btn-secondary" style="width: auto; background: #064e3b; color: white;" onclick="openBulkUserModal()">📋 Impor Banyak User</button>
               <button class="btn btn-primary" style="width: auto;" onclick="openUserModal()">+ Tambah User</button>
@@ -731,25 +734,29 @@
           </div>
         </div>
 
-        <!-- PAGE: ADMIN PERMISSIONS -->
+        <!-- PAGE: ADMIN PERMISSIONS (SUPER FAST INTERACTIVE MATRIX) -->
         <div id="pageAdminPerms" class="page-section hidden">
-          <h2 class="page-title">Kelola Hak Akses Tools</h2>
-          <p class="page-desc">Pilih user dan centang tool eksklusif yang diberikan akses.</p>
-
-          <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); max-width: 600px;">
-            <div class="form-group">
-              <label>Pilih User</label>
-              <select id="permUserSelect" class="form-control" onchange="loadUserPermissionCheckboxes()">
-                <option value="">-- Pilih User --</option>
-              </select>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h2 class="page-title" style="margin:0;">Kelola Hak Akses Tools</h2>
+              <div id="adminPermsCountBadge" style="font-size: 13px; color: var(--text-muted); margin-top: 4px; font-weight: 600;">Loading statistik hak akses...</div>
             </div>
-
-            <div class="form-group" style="margin-top: 20px;">
-              <label>Pilih Tool yang Diberikan Akses:</label>
-              <div id="permToolsCheckboxContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;"></div>
+            <div style="min-width: 240px;">
+              <input type="text" id="permSearchInput" class="form-control" placeholder="🔍 Cari nama/email user..." oninput="filterPermsUserList()">
             </div>
+          </div>
 
-            <button class="btn btn-primary" id="btnSavePerms" style="margin-top: 16px;" onclick="saveUserPermissions()">Simpan Akses</button>
+          <div class="admin-table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>User / Member</th>
+                  <th>Akses Tools Diberikan (Centang/Uncentang)</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminPermsTableBody"></tbody>
+            </table>
           </div>
         </div>
 
@@ -1259,15 +1266,9 @@
       }
 
       const randomNum = Math.floor(100 + Math.random() * 900);
-      const generated = baseName + randomNum + '!';
+      const generated = baseName + randomNum; // Clean format: No '!'
       
       document.getElementById('modalUserPassword').value = generated;
-    }
-
-    function handleNameOrEmailInput() {
-      if (!isPasswordManuallyEdited) {
-        generateAutoPassword();
-      }
     }
 
     async function loadAdminUsers() {
@@ -1278,7 +1279,11 @@
           const tbody = document.getElementById('adminUsersTableBody');
           tbody.innerHTML = '';
           
+          let totalCount = res.users.length;
+          let activeCount = 0;
+
           res.users.forEach(u => {
+            if (u.status === 'active') activeCount++;
             const tr = document.createElement('tr');
             const isSelf = String(u.userId).trim() === String(currentUser.userId).trim();
             tr.innerHTML = `
@@ -1303,6 +1308,8 @@
             `;
             tbody.appendChild(tr);
           });
+
+          document.getElementById('adminUsersCountBadge').innerHTML = `👥 Total Member: <strong>${totalCount}</strong> | Aktif: <strong style="color:var(--primary);">${activeCount}</strong>`;
         } else {
           showToast(res.message, true);
         }
@@ -1311,365 +1318,13 @@
       }
     }
 
-    function openEditUserModal(userId) {
-      const searchId = String(userId).trim();
-      const user = adminUsersCache.find(u => String(u.userId).trim() === searchId);
-      if (!user) {
-        showToast('Data user tidak ditemukan.', true);
-        return;
-      }
-      document.getElementById('editUserId').value = user.userId;
-      document.getElementById('editUserName').value = user.name;
-      document.getElementById('editUserEmail').value = user.email;
-      document.getElementById('editUserPhone').value = user.phone || '';
-      document.getElementById('editUserPassword').value = user.password || '';
-      document.getElementById('editUserRole').value = user.role || 'user';
-      document.getElementById('editUserStatus').value = user.status || 'active';
-      document.getElementById('editUserModal').classList.remove('hidden');
-    }
-
-    function closeEditUserModal() {
-      document.getElementById('editUserModal').classList.add('hidden');
-    }
-
-    async function submitEditUserForm() {
-      const userId = document.getElementById('editUserId').value;
-      const newPhone = document.getElementById('editUserPhone').value;
-      const newPass = document.getElementById('editUserPassword').value;
-      const newRole = document.getElementById('editUserRole').value;
-      const newStatus = document.getElementById('editUserStatus').value;
-      const btn = document.getElementById('btnSubmitEditUser');
-
-      btn.disabled = true;
-      btn.innerText = 'Memproses...';
-
-      try {
-        const res = await callApi('adminUpdateUser', { 
-          token: sessionToken, 
-          targetUserId: userId, 
-          newStatus: newStatus, 
-          newRole: newRole,
-          newPassword: newPass,
-          phone: newPhone
-        });
-        btn.disabled = false;
-        btn.innerText = 'Simpan Perubahan';
-
-        if (res.success) {
-          showToast(res.message);
-          closeEditUserModal();
-          loadAdminUsers();
-        } else {
-          showToast(res.message, true);
-        }
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerText = 'Simpan Perubahan';
-        showToast('Gagal memperbarui user: ' + err.message, true);
-      }
-    }
-
-    function openUserModal() {
-      isPasswordManuallyEdited = false;
-      document.getElementById('modalUserName').value = '';
-      document.getElementById('modalUserEmail').value = '';
-      document.getElementById('modalUserPhone').value = '';
-      document.getElementById('modalUserPassword').value = '';
-      document.getElementById('modalUserRole').value = 'user';
-      document.getElementById('userModal').classList.remove('hidden');
-    }
-
-    function closeUserModal() {
-      document.getElementById('userModal').classList.add('hidden');
-    }
-
-    function openBulkUserModal() {
-      document.getElementById('bulkUserTextarea').value = '';
-      document.getElementById('bulkPreviewInfo').innerText = '';
-      document.getElementById('bulkUserModal').classList.remove('hidden');
-    }
-
-    function closeBulkUserModal() {
-      document.getElementById('bulkUserModal').classList.add('hidden');
-    }
-
-    function updateBulkPreview() {
-      const rawText = document.getElementById('bulkUserTextarea').value;
-      const parsed = parseBulkText(rawText);
-      const infoEl = document.getElementById('bulkPreviewInfo');
-      if (parsed.length > 0) {
-        infoEl.style.color = '#059669';
-        infoEl.innerText = '✅ Terdeteksi ' + parsed.length + ' user valid yang siap diimpor.';
-      } else if (rawText.trim().length > 0) {
-        infoEl.style.color = '#b91c1c';
-        infoEl.innerText = '⚠️ Belum ada alamat email valid yang terdeteksi. Pastikan ada email di setiap baris.';
-      } else {
-        infoEl.innerText = '';
-      }
-    }
-
-    /**
-     * Ultra-Flexible Smart Bulk Text Parser
-     */
-    function parseBulkText(rawText) {
-      if (!rawText) return [];
-      const lines = rawText.split('\n');
-      const users = [];
-
-      const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
-      const phoneRegex = /(?:\+?\d{1,4}[\s.-]?)?\(?\d{2,5}\)?[\s.-]?\d{3,5}[\s.-]?\d{3,5}/;
-
-      lines.forEach(line => {
-        let clean = line.trim();
-        if (!clean) return;
-
-        // 1. Extract email address
-        const emailMatch = clean.match(emailRegex);
-        if (!emailMatch) return; // Skip line if no valid email present
-
-        const email = emailMatch[0].trim().toLowerCase();
-
-        // 2. Extract phone number if present
-        let phone = '';
-        const phoneMatch = clean.match(phoneRegex);
-        if (phoneMatch) {
-          const digitOnly = phoneMatch[0].replace(/\D/g, '');
-          if (digitOnly.length >= 8) {
-            phone = phoneMatch[0].trim();
-          }
-        }
-
-        // 3. Extract Name by removing email and phone parts from line
-        let namePart = clean;
-        namePart = namePart.replace(emailMatch[0], '');
-        if (phone) {
-          namePart = namePart.replace(phone, '');
-        }
-
-        // Clean delimiters like |, ,, ;, \t
-        namePart = namePart.replace(/[|,\t;:-]+/g, ' ').replace(/\s+/g, ' ').trim();
-
-        // Fallback name if left blank
-        let name = namePart;
-        if (!name) {
-          const prefix = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, ' ');
-          name = prefix.charAt(0).toUpperCase() + prefix.slice(1);
-        }
-
-        users.push({
-          name: name,
-          email: email,
-          phone: phone
-        });
-      });
-
-      return users;
-    }
-
-    async function submitBulkUserForm() {
-      const rawText = document.getElementById('bulkUserTextarea').value;
-      const parsedUsers = parseBulkText(rawText);
-      const btn = document.getElementById('btnSubmitBulkUser');
-
-      if (parsedUsers.length === 0) {
-        showToast('Tidak ada data valid yang terdeteksi. Pastikan setiap baris mengandung email.', true);
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = 'Memproses ' + parsedUsers.length + ' data...';
-
-      try {
-        const res = await callApi('adminBulkCreateUsers', { token: sessionToken, usersList: parsedUsers });
-        btn.disabled = false;
-        btn.innerText = 'Impor Sekarang';
-
-        if (res.success) {
-          showToast(res.message);
-          closeBulkUserModal();
-          loadAdminUsers();
-        } else {
-          showToast(res.message, true);
-        }
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerText = 'Impor Sekarang';
-        showToast('Gagal impor user: ' + err.message, true);
-      }
-    }
-
-    async function submitUserForm() {
-      const name = document.getElementById('modalUserName').value;
-      const email = document.getElementById('modalUserEmail').value;
-      const phone = document.getElementById('modalUserPhone').value;
-      const pass = document.getElementById('modalUserPassword').value;
-      const role = document.getElementById('modalUserRole').value;
-      const btn = document.getElementById('btnSubmitAddUser');
-
-      if (!name || !email || !pass) {
-        showToast('Nama, Email, dan Password wajib diisi!', true);
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = 'Memproses...';
-
-      try {
-        const res = await callApi('adminCreateUser', { 
-          token: sessionToken, 
-          name: name, 
-          email: email, 
-          password: pass, 
-          role: role,
-          phone: phone
-        });
-        btn.disabled = false;
-        btn.innerText = 'Buat User';
-
-        if (res.success) {
-          showToast(res.message);
-          closeUserModal();
-          loadAdminUsers();
-        } else {
-          showToast(res.message, true);
-        }
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerText = 'Buat User';
-        showToast('Gagal membuat user: ' + err.message, true);
-      }
-    }
-
-    async function toggleUserStatus(userId, newStatus) {
-      try {
-        const res = await callApi('adminUpdateUser', { token: sessionToken, targetUserId: userId, newStatus: newStatus });
-        if (res.success) {
-          showToast(res.message);
-          loadAdminUsers();
-        } else {
-          showToast(res.message, true);
-        }
-      } catch (err) {
-        showToast('Gagal mengubah status: ' + err.message, true);
-      }
-    }
-
-    async function loadAdminTools() {
-      try {
-        const res = await callApi('adminGetTools', { token: sessionToken });
-        if (res.success) {
-          adminToolsCache = res.tools;
-          const tbody = document.getElementById('adminToolsTableBody');
-          tbody.innerHTML = '';
-          
-          res.tools.forEach(t => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td style="font-size:20px;">${t.icon}</td>
-              <td><strong>${escapeHtml(t.name)}</strong></td>
-              <td><code>${escapeHtml(t.slug)}</code></td>
-              <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
-              <td>
-                <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="editToolModal('${escapeHtml(String(t.toolId))}')">Edit</button>
-              </td>
-            `;
-            tbody.appendChild(tr);
-          });
-        } else {
-          showToast(res.message, true);
-        }
-      } catch (err) {
-        showToast('Gagal memuat tools: ' + err.message, true);
-      }
-    }
-
-    function openToolModal() {
-      document.getElementById('modalToolTitle').innerText = 'Tambah Tool Eksklusif';
-      document.getElementById('modalToolId').value = '';
-      document.getElementById('modalToolName').value = '';
-      document.getElementById('modalToolSlug').value = '';
-      document.getElementById('modalToolIcon').value = '🛠️';
-      document.getElementById('modalToolDesc').value = '';
-      document.getElementById('modalToolUrl').value = '';
-      document.getElementById('modalToolBuyUrl').value = '';
-      document.getElementById('modalToolActive').checked = true;
-      document.getElementById('toolModal').classList.remove('hidden');
-    }
-
-    function editToolModal(toolId) {
-      const searchId = String(toolId).trim();
-      const tool = adminToolsCache.find(t => String(t.toolId).trim() === searchId);
-      if (!tool) {
-        showToast('Data tool tidak ditemukan.', true);
-        return;
-      }
-      document.getElementById('modalToolTitle').innerText = 'Edit Tool Eksklusif';
-      document.getElementById('modalToolId').value = tool.toolId || '';
-      document.getElementById('modalToolName').value = tool.name || '';
-      document.getElementById('modalToolSlug').value = tool.slug || '';
-      document.getElementById('modalToolIcon').value = tool.icon || '🛠️';
-      document.getElementById('modalToolDesc').value = tool.description || '';
-      document.getElementById('modalToolUrl').value = tool.canvasUrl || '';
-      document.getElementById('modalToolBuyUrl').value = tool.buyUrl || '';
-      document.getElementById('modalToolActive').checked = tool.active !== false;
-      document.getElementById('toolModal').classList.remove('hidden');
-    }
-
-    function closeToolModal() {
-      document.getElementById('toolModal').classList.add('hidden');
-    }
-
-    async function submitToolForm() {
-      const btn = document.getElementById('btnSubmitTool');
-      const toolData = {
-        toolId: String(document.getElementById('modalToolId').value || '').trim(),
-        name: String(document.getElementById('modalToolName').value || '').trim(),
-        slug: String(document.getElementById('modalToolSlug').value || '').trim(),
-        icon: String(document.getElementById('modalToolIcon').value || '🛠️').trim(),
-        description: String(document.getElementById('modalToolDesc').value || '').trim(),
-        canvasUrl: String(document.getElementById('modalToolUrl').value || '').trim(),
-        buyUrl: String(document.getElementById('modalToolBuyUrl').value || '').trim(),
-        active: document.getElementById('modalToolActive').checked
-      };
-
-      if (!toolData.name || !toolData.canvasUrl) {
-        showToast('Nama Tool dan URL Link wajib diisi!', true);
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = 'Memproses...';
-
-      try {
-        const res = await callApi('adminSaveTool', { token: sessionToken, toolData: toolData });
-        btn.disabled = false;
-        btn.innerText = 'Simpan Tool';
-
-        if (res.success) {
-          showToast(res.message);
-          closeToolModal();
-          loadAdminTools();
-          loadUserTools();
-        } else {
-          showToast(res.message, true);
-        }
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerText = 'Simpan Tool';
-        showToast('Gagal menyimpan tool: ' + err.message, true);
-      }
-    }
-
     let currentPermissionsCache = [];
 
     /**
-     * Fast Parallel Fetching for Admin Permissions Page
+     * Super Fast Interactive Permissions Table Engine
      */
     async function loadAdminPermissionsData() {
       try {
-        showToast('Memuat data hak akses...');
-        
-        // Execute 3 API calls concurrently using Promise.all for maximum speed
         const [resUsers, resTools, resPerms] = await Promise.all([
           callApi('adminGetUsers', { token: sessionToken }),
           callApi('adminGetTools', { token: sessionToken }),
@@ -1681,90 +1336,126 @@
           adminToolsCache = resTools.tools;
           currentPermissionsCache = resPerms.permissions;
 
-          const select = document.getElementById('permUserSelect');
-          select.innerHTML = '<option value="">-- Pilih User --</option>';
-          resUsers.users.forEach(u => {
-            select.innerHTML += `<option value="${escapeHtml(String(u.userId))}">${escapeHtml(u.name)} (${escapeHtml(u.email)})</option>`;
-          });
+          const activeUsers = resUsers.users.filter(u => u.status === 'active').length;
+          document.getElementById('adminPermsCountBadge').innerHTML = `👥 Total Member: <strong>${resUsers.users.length}</strong> | User Aktif: <strong style="color:var(--primary);">${activeUsers}</strong> | Tools Tersedia: <strong>${resTools.tools.length}</strong>`;
 
-          loadUserPermissionCheckboxes();
+          renderPermsMatrixTable();
         } else {
-          showToast('Gagal memuat beberapa data permissions.', true);
+          showToast('Gagal memuat data permissions.', true);
         }
       } catch (err) {
         showToast('Gagal memuat data permissions: ' + err.message, true);
       }
     }
 
-    function loadUserPermissionCheckboxes() {
-      const selectedUserId = String(document.getElementById('permUserSelect').value).trim();
-      const container = document.getElementById('permToolsCheckboxContainer');
-      container.innerHTML = '';
+    function renderPermsMatrixTable() {
+      const tbody = document.getElementById('adminPermsTableBody');
+      const search = (document.getElementById('permSearchInput').value || '').toLowerCase().trim();
+      tbody.innerHTML = '';
 
-      if (!selectedUserId) return;
-
-      adminToolsCache.forEach(tool => {
-        const toolIdStr = String(tool.toolId).trim();
-        const hasPerm = currentPermissionsCache.some(p => String(p.userId).trim() === selectedUserId && String(p.toolId).trim() === toolIdStr && p.active);
-        const div = document.createElement('div');
-        div.style.display = 'flex';
-        div.style.alignItems = 'center';
-        div.style.gap = '8px';
-        div.innerHTML = `
-          <input type="checkbox" id="perm_tool_${toolIdStr}" value="${toolIdStr}" ${hasPerm ? 'checked' : ''} style="width: 18px; height: 18px;">
-          <label for="perm_tool_${toolIdStr}">${tool.icon} <strong>${escapeHtml(tool.name)}</strong></label>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    async function saveUserPermissions() {
-      const selectedUserId = String(document.getElementById('permUserSelect').value).trim();
-      const btn = document.getElementById('btnSavePerms');
-
-      if (!selectedUserId) {
-        showToast('Silakan pilih user terlebih dahulu.', true);
+      if (!adminUsersCache || adminUsersCache.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">Belum ada user registered.</td></tr>';
         return;
       }
 
+      const filteredUsers = adminUsersCache.filter(u => {
+        if (!search) return true;
+        return (u.name && u.name.toLowerCase().includes(search)) || (u.email && u.email.toLowerCase().includes(search));
+      });
+
+      if (filteredUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">Tidak ada user yang cocok dengan pencarian.</td></tr>';
+        return;
+      }
+
+      filteredUsers.forEach(user => {
+        const userIdStr = String(user.userId).trim();
+        const tr = document.createElement('tr');
+
+        // Render tool access chips/checkboxes inline
+        let toolsCheckboxesHtml = '<div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">';
+        
+        if (!adminToolsCache || adminToolsCache.length === 0) {
+          toolsCheckboxesHtml += '<span style="color:var(--text-muted); font-size:12px;">Belum ada tool tersimpan.</span>';
+        } else {
+          adminToolsCache.forEach(tool => {
+            const toolIdStr = String(tool.toolId).trim();
+            const hasPerm = currentPermissionsCache.some(p => String(p.userId).trim() === userIdStr && String(p.toolId).trim() === toolIdStr && p.active);
+            
+            toolsCheckboxesHtml += `
+              <label style="display:inline-flex; align-items:center; gap:6px; background:${hasPerm ? '#ecfdf5' : '#f8fafc'}; border:1px solid ${hasPerm ? '#059669' : '#e2e8f0'}; padding:6px 12px; border-radius:20px; cursor:pointer; font-size:12px; font-weight:${hasPerm ? '700' : '500'}; transition:all 0.15s;">
+                <input type="checkbox" class="perm-chk-${userIdStr}" data-toolid="${toolIdStr}" ${hasPerm ? 'checked' : ''} style="accent-color:var(--primary); cursor:pointer;">
+                <span>${tool.icon || '🛠️'} ${escapeHtml(tool.name)}</span>
+              </label>
+            `;
+          });
+        }
+        toolsCheckboxesHtml += '</div>';
+
+        tr.innerHTML = `
+          <td>
+            <strong>${escapeHtml(user.name)}</strong>
+            <br><small style="color:var(--text-muted); font-size:12px;">${escapeHtml(user.email)}</small>
+            <br><span class="badge ${user.role === 'admin' ? 'badge-success' : 'badge-secondary'}" style="margin-top:4px;">${user.role}</span>
+          </td>
+          <td>${toolsCheckboxesHtml}</td>
+          <td style="vertical-align:middle;">
+            <button class="btn btn-primary" id="btn_save_perm_${userIdStr}" style="padding:8px 14px; font-size:12px; width:auto;" onclick="saveSingleUserPermissions('${userIdStr}')">💾 Simpan Akses</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterPermsUserList() {
+      renderPermsMatrixTable();
+    }
+
+    async function saveSingleUserPermissions(userIdStr) {
+      const btn = document.getElementById('btn_save_perm_' + userIdStr);
+      const checkboxes = document.querySelectorAll('.perm-chk-' + userIdStr);
+      
       const selectedToolIds = [];
-      adminToolsCache.forEach(tool => {
-        const toolIdStr = String(tool.toolId).trim();
-        const chk = document.getElementById('perm_tool_' + toolIdStr);
-        if (chk && chk.checked) {
-          selectedToolIds.push(toolIdStr);
+      checkboxes.forEach(chk => {
+        if (chk.checked) {
+          selectedToolIds.push(chk.getAttribute('data-toolid'));
         }
       });
 
-      btn.disabled = true;
-      btn.innerText = 'Memproses...';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Saving...';
+      }
 
       try {
-        const res = await callApi('adminSavePermissions', { token: sessionToken, targetUserId: selectedUserId, selectedToolIds: selectedToolIds });
-        btn.disabled = false;
-        btn.innerText = 'Simpan Akses';
+        const res = await callApi('adminSavePermissions', { token: sessionToken, targetUserId: userIdStr, selectedToolIds: selectedToolIds });
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = '💾 Simpan Akses';
+        }
 
         if (res.success) {
-          showToast(res.message);
-          loadAdminPermissionsData();
+          showToast('Akses user berhasil diperbarui!');
+          // Optimistic local update
+          selectedToolIds.forEach(tId => {
+            let perm = currentPermissionsCache.find(p => String(p.userId).trim() === userIdStr && String(p.toolId).trim() === tId);
+            if (perm) {
+              perm.active = true;
+            } else {
+              currentPermissionsCache.push({ userId: userIdStr, toolId: tId, active: true });
+            }
+          });
+          renderPermsMatrixTable();
         } else {
           showToast(res.message, true);
         }
       } catch (err) {
-        btn.disabled = false;
-        btn.innerText = 'Simpan Akses';
-        showToast('Gagal menyimpan permissions: ' + err.message, true);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = '💾 Simpan Akses';
+        }
+        showToast('Gagal menyimpan akses: ' + err.message, true);
       }
-    }
-
-    function escapeHtml(text) {
-      if (!text) return '';
-      return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
     }
   </script>
 </body>
