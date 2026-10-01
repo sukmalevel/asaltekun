@@ -133,21 +133,20 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 12px 20px;
-      font-size: 14px;
+      padding: 10px 18px;
+      font-size: 13px;
       font-weight: 600;
       border-radius: 10px;
       border: none;
       cursor: pointer;
       transition: all 0.2s;
-      gap: 8px;
+      gap: 6px;
       text-decoration: none;
     }
 
     .btn-primary {
       background: var(--primary);
       color: white;
-      width: 100%;
     }
 
     .btn-primary:hover {
@@ -157,7 +156,6 @@
     .btn-buy {
       background: #f59e0b;
       color: white;
-      width: 100%;
     }
 
     .btn-buy:hover {
@@ -171,6 +169,24 @@
 
     .btn-secondary:hover {
       background: #e2e8f0;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .btn-danger:hover {
+      background: #fca5a5;
+    }
+
+    .btn-youtube {
+      background: #ff0000;
+      color: white;
+    }
+
+    .btn-youtube:hover {
+      background: #cc0000;
     }
 
     /* API CONFIG BAR */
@@ -400,7 +416,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 24px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -418,9 +434,29 @@
       border-style: dashed;
     }
 
-    .tool-icon {
-      font-size: 32px;
+    /* 1:1 SQUARE THUMBNAIL ASPECT RATIO */
+    .tool-thumb-box {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f1f5f9;
       margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .tool-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .tool-icon-fallback {
+      font-size: 54px;
     }
 
     .tool-title {
@@ -436,6 +472,12 @@
       line-height: 1.5;
       margin-bottom: 20px;
       flex: 1;
+    }
+
+    .action-button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .admin-table-container {
@@ -564,7 +606,7 @@
             </button>
           </div>
         </div>
-        <button type="submit" id="loginSubmitBtn" class="btn btn-primary">Masuk ke Dashboard</button>
+        <button type="submit" id="loginSubmitBtn" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Masuk ke Dashboard</button>
       </form>
 
       <!-- SOCIAL MEDIA LINKS & FOOTER -->
@@ -660,7 +702,7 @@
         <!-- PAGE: PROFILE -->
         <div id="pageProfile" class="page-section hidden">
           <h2 class="page-title">Profil Akun</h2>
-          <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); max-width: 500px;">
+          <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); max-width: 540px;">
             <div class="form-group">
               <label>Nama Lengkap</label>
               <input type="text" id="profName" class="form-control" readonly>
@@ -673,10 +715,25 @@
               <label>Role Status</label>
               <input type="text" id="profRole" class="form-control" readonly>
             </div>
-            <div id="profApiUrlContainer" class="form-group hidden" style="margin-top:20px;">
-              <label>Backend Apps Script Endpoint URL</label>
+
+            <!-- ADMIN ONLY TELEGRAM BOT & BACKEND CONFIG -->
+            <div id="adminConfigSection" class="hidden" style="margin-top:24px; padding-top:20px; border-top:1px solid var(--border);">
+              <h3 style="font-size:15px; font-weight:700; color:var(--primary-dark); margin-bottom:12px;">📲 Integrasi Telegram Bot Monitoring</h3>
+              <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Setiap kali member mengeklik Buka Tool, Dapatkan Akses, atau Lihat Tutorial, notifikasi otomatis dikirim ke Telegram Anda.</p>
+              
+              <div class="form-group">
+                <label>Telegram Bot Token</label>
+                <input type="text" id="tgBotToken" class="form-control" placeholder="Contoh: 7123456789:AAE...">
+              </div>
+              <div class="form-group">
+                <label>Telegram Chat ID Admin</label>
+                <input type="text" id="tgChatId" class="form-control" placeholder="Contoh: 123456789">
+              </div>
+              <button type="button" class="btn btn-primary" style="font-size:12px; margin-bottom:20px;" onclick="saveTelegramConfig()">🧪 Simpan & Tes Kirim Pesan Telegram</button>
+
+              <h3 style="font-size:15px; font-weight:700; color:var(--primary-dark); margin-bottom:12px;">⚙️ Endpoint Backend Apps Script</h3>
               <input type="text" id="profApiUrl" class="form-control" placeholder="https://script.google.com/macros/s/..." readonly>
-              <button class="btn btn-secondary" style="margin-top:8px; font-size:12px;" onclick="promptApiUrl()">Ubah Endpoint Backend</button>
+              <button type="button" class="btn btn-secondary" style="margin-top:8px; font-size:12px;" onclick="promptApiUrl()">Ubah Endpoint Backend</button>
             </div>
           </div>
         </div>
@@ -722,7 +779,7 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>Icon</th>
+                  <th>Thumbnail</th>
                   <th>Nama Tool</th>
                   <th>Slug</th>
                   <th>Status</th>
@@ -734,7 +791,7 @@
           </div>
         </div>
 
-        <!-- PAGE: ADMIN PERMISSIONS (SUPER FAST INTERACTIVE MATRIX) -->
+        <!-- PAGE: ADMIN PERMISSIONS -->
         <div id="pageAdminPerms" class="page-section hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
             <div>
@@ -764,7 +821,8 @@
     </div>
   </div>
 
-  <!-- MODAL EDIT/ADD USER BY ADMIN -->
+  <!-- MODALS SECTION -->
+  <!-- MODAL EDIT USER -->
   <div id="editUserModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
     <div class="auth-card" style="max-width: 450px;">
       <h3 style="margin-bottom: 16px;">Edit Data & Password User</h3>
@@ -812,10 +870,11 @@
   </div>
 
   <!-- MODAL EDIT/ADD TOOL -->
-  <div id="toolModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
-    <div class="auth-card" style="max-width: 500px;">
+  <div id="toolModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5); overflow-y:auto;">
+    <div class="auth-card" style="max-width: 520px; margin: 30px auto;">
       <h3 id="modalToolTitle" style="margin-bottom: 16px;">Form Tool Eksklusif</h3>
       <input type="hidden" id="modalToolId">
+      
       <div class="form-group">
         <label>Nama Tool</label>
         <input type="text" id="modalToolName" class="form-control" placeholder="Contoh: Affiliate Video Maker" required>
@@ -825,21 +884,44 @@
         <input type="text" id="modalToolSlug" class="form-control" placeholder="affiliate-video-maker (opsional)">
       </div>
       <div class="form-group">
-        <label>Icon (Emoji)</label>
+        <label>Icon Emoji Default</label>
         <input type="text" id="modalToolIcon" class="form-control" placeholder="🎬" value="🛠️">
       </div>
+
+      <!-- 1:1 SQUARE THUMBNAIL UPLOAD / URL -->
+      <div class="form-group">
+        <label>Thumbnail Tool (Rasio 1:1 / Square 1024x1024)</label>
+        <input type="url" id="modalToolThumbUrl" class="form-control" placeholder="URL Gambar https://... (opsional)" oninput="previewThumbnailImage()">
+        <div style="margin-top: 6px; font-size: 11px; color: var(--text-muted);">Atau Upload File Gambar:</div>
+        <input type="file" id="modalToolThumbFile" accept="image/*" class="form-control" style="padding: 6px; font-size: 12px; margin-top: 4px;" onchange="handleThumbnailFileUpload(event)">
+        
+        <!-- THUMBNAIL PREVIEW BOX -->
+        <div id="thumbPreviewContainer" style="margin-top: 10px; width: 120px; height: 120px; border-radius: 12px; border: 1px dashed var(--border); overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
+          <span id="thumbPreviewPlaceholder" style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 4px;">Preview 1:1</span>
+          <img id="thumbPreviewImg" src="" class="hidden" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+      </div>
+
       <div class="form-group">
         <label>Deskripsi Tool</label>
         <textarea id="modalToolDesc" class="form-control" rows="2" placeholder="Deskripsi singkat mengenai tool..."></textarea>
       </div>
       <div class="form-group">
-        <label>URL / Endpoint Tool Eksklusif</label>
+        <label>URL / Endpoint Canvas Tool</label>
         <input type="url" id="modalToolUrl" class="form-control" placeholder="https://..." required>
       </div>
       <div class="form-group">
         <label>Link Pembelian / Checkout URL (Jika Belum Dimiliki)</label>
         <input type="url" id="modalToolBuyUrl" class="form-control" placeholder="https://asaltekun.id/checkout/...">
       </div>
+      
+      <!-- YOUTUBE TUTORIAL VIDEO URL -->
+      <div class="form-group">
+        <label>📺 Link Video Tutorial YouTube (Opsional)</label>
+        <input type="url" id="modalToolTutorialUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+        <small style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Member dapat menonton panduan video di YouTube secara langsung dari kartu produk.</small>
+      </div>
+
       <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
         <input type="checkbox" id="modalToolActive" checked style="width: 18px; height: 18px;">
         <label for="modalToolActive" style="margin: 0; cursor: pointer;">Status Aktif</label>
@@ -878,7 +960,7 @@
             <span id="addEyeIcon">👁️</span>
           </button>
         </div>
-        <small style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Password terisi otomatis berdasarkan nama/email, dan tetap bisa Anda edit bebas.</small>
+        <small style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Password terisi otomatis berbasis nama/email dan tetap bisa diubah bebas.</small>
       </div>
       <div class="form-group">
         <label>Role</label>
@@ -917,6 +999,7 @@
     </div>
   </div>
 
+  <!-- FRONTEND LOGIC & API CLIENT ENGINE -->
   <script>
     let backendUrl = localStorage.getItem('asaltekun_backend_url') || 'https://script.google.com/macros/s/AKfycbx0520G2vPqyOq3lKOaeoEKKFB3TAX_M2y7iV93LiKRV1k6fESVgqcI86L4w0Gj82kN0w/exec';
     let sessionToken = localStorage.getItem('asaltekun_token') || null;
@@ -1104,17 +1187,20 @@
       }
     }
 
-    async function handleLogout() {
-      if (sessionToken) {
-        try {
-          await callApi('logout', { token: sessionToken });
-        } catch(e) {}
-      }
-      localStorage.removeItem('asaltekun_token');
+    /**
+     * INSTANT CLIENT-SIDE LOGOUT (<0.01s)
+     */
+    function handleLogout() {
+      const activeToken = sessionToken;
       sessionToken = null;
       currentUser = null;
-      showToast('Anda telah keluar.');
+      localStorage.removeItem('asaltekun_token');
       showAuthView();
+      showToast('Anda telah keluar.');
+
+      if (activeToken && backendUrl) {
+        callApi('logout', { token: activeToken }).catch(() => {});
+      }
     }
 
     function switchPage(page) {
@@ -1124,11 +1210,11 @@
       if (page === 'dashboard') {
         document.getElementById('pageDashboard').classList.remove('hidden');
         document.getElementById('navDashboard').classList.add('active');
-        renderToolsGrid();
+        loadUserTools();
       } else if (page === 'tools') {
         document.getElementById('pageTools').classList.remove('hidden');
         document.getElementById('navTools').classList.add('active');
-        renderToolsGrid();
+        loadUserTools();
       } else if (page === 'profile') {
         document.getElementById('pageProfile').classList.remove('hidden');
         document.getElementById('navProfile').classList.add('active');
@@ -1136,12 +1222,12 @@
         document.getElementById('profEmail').value = currentUser ? (currentUser.email || '') : '';
         document.getElementById('profRole').value = currentUser ? (currentUser.role || '') : '';
 
-        const apiContainer = document.getElementById('profApiUrlContainer');
+        const adminSection = document.getElementById('adminConfigSection');
         if (currentUser && String(currentUser.role).toLowerCase() === 'admin') {
-          apiContainer.classList.remove('hidden');
+          adminSection.classList.remove('hidden');
           document.getElementById('profApiUrl').value = backendUrl;
         } else {
-          apiContainer.classList.add('hidden');
+          adminSection.classList.add('hidden');
         }
       } else if (page === 'adminUsers') {
         document.getElementById('pageAdminUsers').classList.remove('hidden');
@@ -1196,25 +1282,40 @@
       let cardsHtml = '';
       userTools.forEach(t => {
         const isOwned = t.hasAccess;
+        const thumbUrl = t.thumbnailUrl;
+        
         cardsHtml += `
           <div class="tool-card ${isOwned ? '' : 'locked'}">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-              <div class="tool-icon" style="margin: 0;">${t.icon || '🔧'}</div>
-              <span class="badge ${isOwned ? 'badge-success' : 'badge-warning'}">
+            <!-- 1:1 SQUARE THUMBNAIL BOX -->
+            <div class="tool-thumb-box">
+              ${thumbUrl ? `
+                <img src="${escapeHtml(thumbUrl)}" class="tool-thumb-img" alt="${escapeHtml(t.name || 'Tool')}">
+              ` : `
+                <div class="tool-icon-fallback">${t.icon || '🛠️'}</div>
+              `}
+              <span class="badge ${isOwned ? 'badge-success' : 'badge-warning'}" style="position:absolute; top:10px; right:10px; box-shadow:var(--shadow-sm);">
                 ${isOwned ? '✓ Akses Aktif' : '🔒 Belum Dimiliki'}
               </span>
             </div>
+
             <div class="tool-title">${escapeHtml(t.name || 'Tool')}</div>
             <div class="tool-description">${escapeHtml(t.description || 'Tidak ada deskripsi.')}</div>
-            ${isOwned ? `
-              <button class="btn btn-primary" onclick="launchTool('${escapeHtml(String(t.toolId || ''))}')">🚀 Buka Tool</button>
-            ` : `
-              ${t.buyUrl ? `
-                <a href="${escapeHtml(t.buyUrl)}" target="_blank" rel="noopener" class="btn btn-buy">🛒 Dapatkan Akses</a>
+            
+            <div class="action-button-group">
+              ${isOwned ? `
+                <button class="btn btn-primary" style="width:100%;" onclick="launchTool('${escapeHtml(String(t.toolId || ''))}')">🚀 Buka Tool</button>
               ` : `
-                <button class="btn btn-secondary" disabled>Hubungi Admin</button>
+                ${t.buyUrl ? `
+                  <a href="${escapeHtml(t.buyUrl)}" target="_blank" rel="noopener" class="btn btn-buy" style="width:100%;" onclick="trackClick('${escapeHtml(String(t.toolId || ''))}', 'buy')">🛒 Dapatkan Akses</a>
+                ` : `
+                  <button class="btn btn-secondary" style="width:100%;" disabled>Hubungi Admin</button>
+                `}
               `}
-            `}
+
+              ${t.tutorialUrl ? `
+                <a href="${escapeHtml(t.tutorialUrl)}" target="_blank" rel="noopener" class="btn btn-youtube" style="width:100%;" onclick="trackClick('${escapeHtml(String(t.toolId || ''))}', 'tutorial')">📺 Lihat Tutorial</a>
+              ` : ''}
+            </div>
           </div>
         `;
       });
@@ -1253,6 +1354,12 @@
       } catch (err) {
         newTab.close();
         showToast('Error verifikasi hak akses: ' + err.message, true);
+      }
+    }
+
+    function trackClick(toolId, type) {
+      if (sessionToken && backendUrl) {
+        callApi('trackClick', { token: sessionToken, toolId: toolId, clickType: type }).catch(() => {});
       }
     }
 
@@ -1351,6 +1458,22 @@
       }
     }
 
+    async function confirmDeleteUser(userId, userName) {
+      if (confirm('Apakah Anda yakin ingin menghapus user "' + userName + '" secara permanen?')) {
+        try {
+          const res = await callApi('adminDeleteUser', { token: sessionToken, targetUserId: userId });
+          if (res.success) {
+            showToast('User berhasil dihapus!');
+            loadAdminUsers();
+          } else {
+            showToast(res.message, true);
+          }
+        } catch (err) {
+          showToast('Gagal menghapus user: ' + err.message, true);
+        }
+      }
+    }
+
     async function toggleUserStatus(userId, newStatus) {
       try {
         const res = await callApi('adminUpdateUser', {
@@ -1425,7 +1548,34 @@
       }
     }
 
+    function previewThumbnailImage() {
+      const url = document.getElementById('modalToolThumbUrl').value.trim();
+      const img = document.getElementById('thumbPreviewImg');
+      const placeholder = document.getElementById('thumbPreviewPlaceholder');
+      if (url) {
+        img.src = url;
+        img.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      } else {
+        img.src = '';
+        img.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
+    }
+
+    function handleThumbnailFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('modalToolThumbUrl').value = evt.target.result;
+        previewThumbnailImage();
+      };
+      reader.readAsDataURL(file);
+    }
+
     function openToolModal(toolId = null) {
+      document.getElementById('modalToolThumbFile').value = '';
       if (toolId) {
         const tool = adminToolsCache.find(t => String(t.toolId).trim() === String(toolId).trim());
         if (tool) {
@@ -1437,6 +1587,8 @@
           document.getElementById('modalToolDesc').value = tool.description || '';
           document.getElementById('modalToolUrl').value = tool.canvasUrl || '';
           document.getElementById('modalToolBuyUrl').value = tool.buyUrl || '';
+          document.getElementById('modalToolThumbUrl').value = tool.thumbnailUrl || '';
+          document.getElementById('modalToolTutorialUrl').value = tool.tutorialUrl || '';
           document.getElementById('modalToolActive').checked = tool.active !== false;
         }
       } else {
@@ -1448,8 +1600,11 @@
         document.getElementById('modalToolDesc').value = '';
         document.getElementById('modalToolUrl').value = '';
         document.getElementById('modalToolBuyUrl').value = '';
+        document.getElementById('modalToolThumbUrl').value = '';
+        document.getElementById('modalToolTutorialUrl').value = '';
         document.getElementById('modalToolActive').checked = true;
       }
+      previewThumbnailImage();
       document.getElementById('toolModal').classList.remove('hidden');
     }
 
@@ -1465,11 +1620,13 @@
       const description = document.getElementById('modalToolDesc').value.trim();
       const canvasUrl = document.getElementById('modalToolUrl').value.trim();
       const buyUrl = document.getElementById('modalToolBuyUrl').value.trim();
+      const thumbnailUrl = document.getElementById('modalToolThumbUrl').value.trim();
+      const tutorialUrl = document.getElementById('modalToolTutorialUrl').value.trim();
       const active = document.getElementById('modalToolActive').checked;
       const btn = document.getElementById('btnSubmitTool');
 
       if (!name || !canvasUrl) {
-        showToast('Nama Tool dan URL Endpoint wajib diisi!', true);
+        showToast('Nama Tool dan URL Endpoint Canvas wajib diisi!', true);
         return;
       }
 
@@ -1487,6 +1644,8 @@
             description: description,
             canvasUrl: canvasUrl,
             buyUrl: buyUrl,
+            thumbnailUrl: thumbnailUrl,
+            tutorialUrl: tutorialUrl,
             active: active
           }
         });
@@ -1517,9 +1676,17 @@
           tbody.innerHTML = '';
           adminToolsCache.forEach(t => {
             const tr = document.createElement('tr');
+            const thumbUrl = t.thumbnailUrl;
             tr.innerHTML = `
-              <td><span style="font-size: 20px;">${t.icon || '🛠️'}</span></td>
-              <td><strong>${escapeHtml(t.name || 'Tool')}</strong><br><small style="color:var(--text-muted);">${escapeHtml(t.description || '')}</small></td>
+              <td>
+                <div style="width:44px; height:44px; border-radius:8px; overflow:hidden; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
+                  ${thumbUrl ? `<img src="${escapeHtml(thumbUrl)}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:20px;">${t.icon || '🛠️'}</span>`}
+                </div>
+              </td>
+              <td>
+                <strong>${escapeHtml(t.name || 'Tool')}</strong>
+                ${t.tutorialUrl ? `<br><small style="color:#cc0000; font-weight:600; font-size:11px;">📺 Ada Tutorial YouTube</small>` : ''}
+              </td>
               <td><code>${escapeHtml(t.slug || '')}</code></td>
               <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
               <td>
@@ -1657,11 +1824,12 @@
               <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status || 'active'}</span></td>
               <td>
                 <div style="display:flex; gap:6px;">
-                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId || ''))}')">✏️ Edit / Pass</button>
+                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId || ''))}')">✏️ Edit</button>
                   ${!isSelf ? `
                     <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${escapeHtml(String(u.userId || ''))}', '${u.status === 'active' ? 'inactive' : 'active'}')">
                       ${u.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}
                     </button>
+                    <button class="btn btn-danger" style="padding: 6px 10px; font-size:12px;" onclick="confirmDeleteUser('${escapeHtml(String(u.userId || ''))}', '${escapeHtml(u.name || '')}')">🗑️ Hapus</button>
                   ` : ''}
                 </div>
               </td>
@@ -1680,9 +1848,6 @@
 
     let currentPermissionsCache = [];
 
-    /**
-     * Super Fast Interactive Permissions Table Engine
-     */
     async function loadAdminPermissionsData() {
       try {
         const [resUsers, resTools, resPerms] = await Promise.all([
@@ -1813,6 +1978,33 @@
           btn.innerText = '💾 Simpan Akses';
         }
         showToast('Gagal menyimpan akses: ' + err.message, true);
+      }
+    }
+
+    async function saveTelegramConfig() {
+      const token = document.getElementById('tgBotToken').value.trim();
+      const chatId = document.getElementById('tgChatId').value.trim();
+
+      if (!token || !chatId) {
+        showToast('Bot Token dan Chat ID wajib diisi!', true);
+        return;
+      }
+
+      try {
+        const res = await callApi('adminSaveTelegramConfig', { token: sessionToken, botToken: token, chatId: chatId });
+        if (res.success) {
+          showToast('Pengaturan Telegram disimpan! Menguji kirim pesan...');
+          const testRes = await callApi('adminTestTelegram', { token: sessionToken });
+          if (testRes.success) {
+            showToast('✅ Berhasil! Cek Telegram Anda.');
+          } else {
+            showToast(testRes.message, true);
+          }
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Error Telegram: ' + err.message, true);
       }
     }
   </script>
