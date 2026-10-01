@@ -1038,6 +1038,14 @@
         });
 
         if (!response.ok) {
+          if (response.status === 404) {
+            showToast('Error 404: URL Web App Apps Script tidak ditemukan/salah! Masukkan URL Web App terbaru.', true);
+            document.getElementById('apiConfigBanner').classList.remove('hidden');
+            setTimeout(() => {
+              promptApiUrl();
+            }, 800);
+            throw new Error('HTTP 404: Web App URL Apps Script kadaluarsa atau tidak ditemukan.');
+          }
           throw new Error('Server HTTP Error: ' + response.status);
         }
 
@@ -1051,12 +1059,12 @@
 
     function promptApiUrl() {
       const current = localStorage.getItem('asaltekun_backend_url') || '';
-      const input = prompt('Masukkan URL Web App Deployment Apps Script Anda:\n(Contoh: https://script.google.com/macros/s/.../exec)', current);
+      const input = prompt('Masukkan URL Web App Deployment Apps Script Terbaru Anda:\n(Contoh: https://script.google.com/macros/s/.../exec)', current);
       if (input && input.trim() !== '') {
         backendUrl = input.trim();
         localStorage.setItem('asaltekun_backend_url', backendUrl);
         document.getElementById('apiConfigBanner').classList.add('hidden');
-        showToast('Backend URL berhasil diperbarui!');
+        showToast('Backend URL berhasil diperbarui! Coba login kembali.');
         if (sessionToken) verifyExistingSession();
       }
     }
