@@ -1474,6 +1474,23 @@
       }
     }
 
+    async function confirmDeleteTool(toolId, toolName) {
+      if (confirm('Apakah Anda yakin ingin menghapus tool "' + toolName + '" secara permanen?')) {
+        try {
+          const res = await callApi('adminDeleteTool', { token: sessionToken, targetToolId: toolId });
+          if (res.success) {
+            showToast('Tool berhasil dihapus!');
+            loadAdminTools();
+            loadUserTools();
+          } else {
+            showToast(res.message, true);
+          }
+        } catch (err) {
+          showToast('Gagal menghapus tool: ' + err.message, true);
+        }
+      }
+    }
+
     async function toggleUserStatus(userId, newStatus) {
       try {
         const res = await callApi('adminUpdateUser', {
@@ -1690,7 +1707,10 @@
               <td><code>${escapeHtml(t.slug || '')}</code></td>
               <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
               <td>
-                <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="openToolModal('${escapeHtml(String(t.toolId || ''))}')">✏️ Edit</button>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="openToolModal('${escapeHtml(String(t.toolId || ''))}')">✏️ Edit</button>
+                  <button class="btn btn-danger" style="padding: 6px 10px; font-size: 12px;" onclick="confirmDeleteTool('${escapeHtml(String(t.toolId || ''))}', '${escapeHtml(t.name || '')}')">🗑️ Hapus</button>
+                </div>
               </td>
             `;
             tbody.appendChild(tr);
