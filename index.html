@@ -41,7 +41,6 @@
       position: relative;
     }
 
-    /* WATERMARK OVERLAY */
     .bg-watermark {
       position: fixed;
       bottom: 20px;
@@ -56,7 +55,6 @@
       letter-spacing: -2px;
     }
 
-    /* AUTHENTICATION VIEW */
     .auth-overlay {
       display: flex;
       align-items: center;
@@ -189,7 +187,6 @@
       background: #cc0000;
     }
 
-    /* API CONFIG BAR */
     .api-config-banner {
       background: #fef3c7;
       border: 1px solid #fde047;
@@ -215,7 +212,6 @@
       cursor: pointer;
     }
 
-    /* SOCIAL LINKS & FOOTER */
     .social-footer {
       margin-top: 24px;
       padding-top: 20px;
@@ -257,7 +253,6 @@
       color: var(--text-muted);
     }
 
-    /* MAIN APP LAYOUT */
     .app-container {
       display: flex;
       min-height: 100vh;
@@ -434,7 +429,6 @@
       border-style: dashed;
     }
 
-    /* 1:1 SQUARE THUMBNAIL ASPECT RATIO */
     .tool-thumb-box {
       width: 100%;
       aspect-ratio: 1 / 1;
@@ -572,13 +566,9 @@
 </head>
 <body>
 
-  <!-- BACKGROUND WATERMARK -->
   <div class="bg-watermark">AsalTekun</div>
-
-  <!-- TOAST NOTIFICATIONS -->
   <div id="toastContainer" class="toast-container"></div>
 
-  <!-- 1. AUTHENTICATION VIEW -->
   <div id="authView" class="auth-overlay">
     <div class="auth-card">
       <div class="brand-logo">
@@ -586,7 +576,6 @@
         <p class="brand-subtitle">Portal Exclusive Member Tools Digital</p>
       </div>
 
-      <!-- API URL CONFIG CHECKER -->
       <div id="apiConfigBanner" class="api-config-banner hidden">
         <span>⚠️ Backend URL belum dikonfigurasi</span>
         <button onclick="promptApiUrl()">Set URL</button>
@@ -609,7 +598,6 @@
         <button type="submit" id="loginSubmitBtn" class="btn btn-primary" style="width: 100%; margin-top: 8px;">Masuk ke Dashboard</button>
       </form>
 
-      <!-- SOCIAL MEDIA LINKS & FOOTER -->
       <div class="social-footer">
         <div class="social-links">
           <a href="https://www.instagram.com/asaltekun" target="_blank" rel="noopener" class="social-btn">
@@ -628,9 +616,7 @@
     </div>
   </div>
 
-  <!-- 2. MAIN DASHBOARD APP VIEW -->
   <div id="appView" class="app-container hidden">
-    <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
         <h2>AsalTekun<span>.id</span></h2>
@@ -676,7 +662,6 @@
       </div>
     </aside>
 
-    <!-- MAIN WRAPPER -->
     <div class="main-wrapper">
       <header class="mobile-header">
         <h3 style="color: var(--primary-dark);">AsalTekun.id</h3>
@@ -684,22 +669,18 @@
       </header>
 
       <main class="main-content">
-
-        <!-- PAGE: DASHBOARD HOME -->
         <div id="pageDashboard" class="page-section">
           <h2 class="page-title" id="welcomeHeading">Selamat Datang!</h2>
           <p class="page-desc">Eksplorasi seluruh katalog tool eksklusif AsalTekun.id di bawah ini.</p>
           <div id="dashboardToolsGrid" class="tools-grid"></div>
         </div>
 
-        <!-- PAGE: TOOLS LIST -->
         <div id="pageTools" class="page-section hidden">
           <h2 class="page-title">Katalog Tools Eksklusif</h2>
           <p class="page-desc">Daftar seluruh tool digital yang tersedia di platform AsalTekun.id.</p>
           <div id="toolsListGrid" class="tools-grid"></div>
         </div>
 
-        <!-- PAGE: PROFILE -->
         <div id="pageProfile" class="page-section hidden">
           <h2 class="page-title">Profil Akun</h2>
           <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border); max-width: 540px;">
@@ -716,7 +697,6 @@
               <input type="text" id="profRole" class="form-control" readonly>
             </div>
 
-            <!-- ADMIN ONLY TELEGRAM BOT & BACKEND CONFIG -->
             <div id="adminConfigSection" class="hidden" style="margin-top:24px; padding-top:20px; border-top:1px solid var(--border);">
               <h3 style="font-size:15px; font-weight:700; color:var(--primary-dark); margin-bottom:12px;">📲 Integrasi Telegram Bot Monitoring</h3>
               <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Setiap kali member mengeklik Buka Tool, Dapatkan Akses, atau Lihat Tutorial, notifikasi otomatis dikirim ke Telegram Anda.</p>
@@ -738,7 +718,6 @@
           </div>
         </div>
 
-        <!-- PAGE: ADMIN USERS -->
         <div id="pageAdminUsers" class="page-section hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <div>
@@ -768,7 +747,6 @@
           </div>
         </div>
 
-        <!-- PAGE: ADMIN TOOLS -->
         <div id="pageAdminTools" class="page-section hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 class="page-title" style="margin:0;">Kelola Tools Eksklusif</h2>
@@ -791,7 +769,6 @@
           </div>
         </div>
 
-        <!-- PAGE: ADMIN PERMISSIONS -->
         <div id="pageAdminPerms" class="page-section hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
             <div>
@@ -821,8 +798,6 @@
     </div>
   </div>
 
-  <!-- MODALS SECTION -->
-  <!-- MODAL EDIT USER -->
   <div id="editUserModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
     <div class="auth-card" style="max-width: 450px;">
       <h3 style="margin-bottom: 16px;">Edit Data & Password User</h3>
@@ -869,7 +844,6 @@
     </div>
   </div>
 
-  <!-- MODAL EDIT/ADD TOOL -->
   <div id="toolModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5); overflow-y:auto;">
     <div class="auth-card" style="max-width: 520px; margin: 30px auto;">
       <h3 id="modalToolTitle" style="margin-bottom: 16px;">Form Tool Eksklusif</h3>
@@ -888,14 +862,12 @@
         <input type="text" id="modalToolIcon" class="form-control" placeholder="🎬" value="🛠️">
       </div>
 
-      <!-- 1:1 SQUARE THUMBNAIL UPLOAD / URL -->
       <div class="form-group">
         <label>Thumbnail Tool (Rasio 1:1 / Square 1024x1024)</label>
         <input type="url" id="modalToolThumbUrl" class="form-control" placeholder="URL Gambar https://... (opsional)" oninput="previewThumbnailImage()">
         <div style="margin-top: 6px; font-size: 11px; color: var(--text-muted);">Atau Upload File Gambar:</div>
         <input type="file" id="modalToolThumbFile" accept="image/*" class="form-control" style="padding: 6px; font-size: 12px; margin-top: 4px;" onchange="handleThumbnailFileUpload(event)">
         
-        <!-- THUMBNAIL PREVIEW BOX -->
         <div id="thumbPreviewContainer" style="margin-top: 10px; width: 120px; height: 120px; border-radius: 12px; border: 1px dashed var(--border); overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
           <span id="thumbPreviewPlaceholder" style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 4px;">Preview 1:1</span>
           <img id="thumbPreviewImg" src="" class="hidden" style="width:100%; height:100%; object-fit:cover;">
@@ -915,7 +887,6 @@
         <input type="url" id="modalToolBuyUrl" class="form-control" placeholder="https://asaltekun.id/checkout/...">
       </div>
       
-      <!-- YOUTUBE TUTORIAL VIDEO URL -->
       <div class="form-group">
         <label>📺 Link Video Tutorial YouTube (Opsional)</label>
         <input type="url" id="modalToolTutorialUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
@@ -933,7 +904,6 @@
     </div>
   </div>
 
-  <!-- MODAL ADD USER -->
   <div id="userModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
     <div class="auth-card" style="max-width: 450px;">
       <h3 style="margin-bottom: 16px;">Tambah User Baru</h3>
@@ -976,7 +946,6 @@
     </div>
   </div>
 
-  <!-- MODAL BULK ADD USERS -->
   <div id="bulkUserModal" class="auth-overlay hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; background: rgba(0,0,0,0.5);">
     <div class="auth-card" style="max-width: 580px;">
       <h3 style="margin-bottom: 12px;">Impor Banyak User sekaligus</h3>
@@ -999,16 +968,27 @@
     </div>
   </div>
 
-  <!-- FRONTEND LOGIC & API CLIENT ENGINE -->
   <script>
-    let backendUrl = localStorage.getItem('asaltekun_backend_url') || 'https://script.google.com/macros/s/AKfycbx0520G2vPqyOq3lKOaeoEKKFB3TAX_M2y7iV93LiKRV1k6fESVgqcI86L4w0Gj82kN0w/exec';
+    const DEFAULT_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbx0520G2vPqyOq3lKOaeoEKKFB3TAX_M2y7iV93LiKRV1k6fESVgqcI86L4w0Gj82kN0w/exec';
+    let storedBackend = localStorage.getItem('asaltekun_backend_url');
+    let backendUrl = (storedBackend && storedBackend.trim() && storedBackend !== 'null' && storedBackend !== 'undefined') ? storedBackend.trim() : DEFAULT_BACKEND_URL;
+    
     let sessionToken = localStorage.getItem('asaltekun_token') || null;
     let currentUser = null;
     let userTools = [];
     let adminUsersCache = [];
     let adminToolsCache = [];
 
-    // Safe HTML Escaper to prevent XSS and undefined errors
+    function formatUrl(url) {
+      if (!url) return '';
+      let clean = String(url).trim();
+      if (!clean) return '';
+      if (!/^https?:\/\//i.test(clean)) {
+        return 'https://' + clean;
+      }
+      return clean;
+    }
+
     function escapeHtml(str) {
       if (str === null || str === undefined || str === 'undefined') return '';
       return String(str)
@@ -1019,11 +999,34 @@
         .replace(/'/g, '&#039;');
     }
 
+    function showToast(message, isError = false) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      if (isError) toast.style.background = '#b91c1c';
+      toast.innerHTML = `<span>${isError ? '⚠️' : '✅'}</span> <span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 3500);
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.innerText = '🙈';
+      } else {
+        input.type = 'password';
+        if (icon) icon.innerText = '👁️';
+      }
+    }
+
     async function callApi(action, payload = {}) {
       if (!backendUrl) {
-        showToast('Apps Script Backend URL belum dikonfigurasi!', true);
-        document.getElementById('apiConfigBanner').classList.remove('hidden');
-        throw new Error('Backend URL missing');
+        backendUrl = DEFAULT_BACKEND_URL;
       }
 
       const bodyData = { action: action, ...payload };
@@ -1039,7 +1042,7 @@
 
         if (!response.ok) {
           if (response.status === 404) {
-            showToast('Error 404: URL Web App Apps Script tidak ditemukan/salah! Masukkan URL Web App terbaru.', true);
+            showToast('Error 404: URL Web App Apps Script tidak ditemukan/salah!', true);
             document.getElementById('apiConfigBanner').classList.remove('hidden');
             setTimeout(() => {
               promptApiUrl();
@@ -1058,48 +1061,23 @@
     }
 
     function promptApiUrl() {
-      const current = localStorage.getItem('asaltekun_backend_url') || '';
+      const current = backendUrl || DEFAULT_BACKEND_URL;
       const input = prompt('Masukkan URL Web App Deployment Apps Script Terbaru Anda:\n(Contoh: https://script.google.com/macros/s/.../exec)', current);
       if (input && input.trim() !== '') {
         backendUrl = input.trim();
         localStorage.setItem('asaltekun_backend_url', backendUrl);
         document.getElementById('apiConfigBanner').classList.add('hidden');
-        showToast('Backend URL berhasil diperbarui! Coba login kembali.');
+        showToast('Backend URL berhasil diperbarui!');
         if (sessionToken) verifyExistingSession();
       }
     }
 
-    function togglePasswordVisibility(inputId, iconId) {
-      const input = document.getElementById(inputId);
-      const icon = document.getElementById(iconId);
-      if (!input || !icon) return;
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.innerText = '🙈';
-      } else {
-        input.type = 'password';
-        icon.innerText = '👁️';
-      }
-    }
-
-    function showToast(message, isError = false) {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      if (isError) toast.style.background = '#b91c1c';
-      toast.innerHTML = (isError ? '⚠️ ' : '✅ ') + message;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.remove();
-      }, 4000);
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
       if (!backendUrl) {
-        document.getElementById('apiConfigBanner').classList.remove('hidden');
+        backendUrl = DEFAULT_BACKEND_URL;
       }
       
-      if (sessionToken && backendUrl) {
+      if (sessionToken) {
         verifyExistingSession();
       } else {
         showAuthView();
@@ -1195,9 +1173,6 @@
       }
     }
 
-    /**
-     * INSTANT CLIENT-SIDE LOGOUT (<0.01s)
-     */
     function handleLogout() {
       const activeToken = sessionToken;
       sessionToken = null;
@@ -1291,10 +1266,11 @@
       userTools.forEach(t => {
         const isOwned = t.hasAccess;
         const thumbUrl = t.thumbnailUrl;
+        const formattedBuyUrl = formatUrl(t.buyUrl);
+        const formattedTutorialUrl = formatUrl(t.tutorialUrl);
         
         cardsHtml += `
           <div class="tool-card ${isOwned ? '' : 'locked'}">
-            <!-- 1:1 SQUARE THUMBNAIL BOX -->
             <div class="tool-thumb-box">
               ${thumbUrl ? `
                 <img src="${escapeHtml(thumbUrl)}" class="tool-thumb-img" alt="${escapeHtml(t.name || 'Tool')}">
@@ -1313,15 +1289,15 @@
               ${isOwned ? `
                 <button class="btn btn-primary" style="width:100%;" onclick="launchTool('${escapeHtml(String(t.toolId || ''))}')">🚀 Buka Tool</button>
               ` : `
-                ${t.buyUrl ? `
-                  <a href="${escapeHtml(t.buyUrl)}" target="_blank" rel="noopener" class="btn btn-buy" style="width:100%;" onclick="trackClick('${escapeHtml(String(t.toolId || ''))}', 'buy')">🛒 Dapatkan Akses</a>
+                ${formattedBuyUrl ? `
+                  <a href="${escapeHtml(formattedBuyUrl)}" target="_blank" rel="noopener" class="btn btn-buy" style="width:100%;" onclick="trackClick('${escapeHtml(String(t.toolId || ''))}', 'buy')">🛒 Dapatkan Akses</a>
                 ` : `
                   <button class="btn btn-secondary" style="width:100%;" disabled>Hubungi Admin</button>
                 `}
               `}
 
-              ${t.tutorialUrl ? `
-                <a href="${escapeHtml(t.tutorialUrl)}" target="_blank" rel="noopener" class="btn btn-youtube" style="width:100%;" onclick="trackClick('${escapeHtml(String(t.toolId || ''))}', 'tutorial')">📺 Lihat Tutorial</a>
+              ${formattedTutorialUrl ? `
+                <a href="${escapeHtml(formattedTutorialUrl)}" target="_blank" rel="noopener" class="btn btn-youtube" style="width:100%;" onclick="trackClick('${escapeHtml(String(t.toolId || ''))}', 'tutorial')">📺 Lihat Tutorial</a>
               ` : ''}
             </div>
           </div>
@@ -1354,7 +1330,7 @@
       try {
         const res = await callApi('getToolUrl', { token: sessionToken, toolId: toolId });
         if (res.success && res.canvasUrl) {
-          newTab.location.href = res.canvasUrl;
+          newTab.location.href = formatUrl(res.canvasUrl);
         } else {
           newTab.close();
           showToast(res.message || 'Gagal membuka tool.', true);
@@ -1643,10 +1619,10 @@
       const slug = document.getElementById('modalToolSlug').value.trim();
       const icon = document.getElementById('modalToolIcon').value.trim();
       const description = document.getElementById('modalToolDesc').value.trim();
-      const canvasUrl = document.getElementById('modalToolUrl').value.trim();
-      const buyUrl = document.getElementById('modalToolBuyUrl').value.trim();
+      const canvasUrl = formatUrl(document.getElementById('modalToolUrl').value);
+      const buyUrl = formatUrl(document.getElementById('modalToolBuyUrl').value);
       const thumbnailUrl = document.getElementById('modalToolThumbUrl').value.trim();
-      const tutorialUrl = document.getElementById('modalToolTutorialUrl').value.trim();
+      const tutorialUrl = formatUrl(document.getElementById('modalToolTutorialUrl').value);
       const active = document.getElementById('modalToolActive').checked;
       const btn = document.getElementById('btnSubmitTool');
 
@@ -1693,39 +1669,230 @@
     }
 
     async function loadAdminTools() {
+      if (adminToolsCache && adminToolsCache.length > 0) {
+        renderAdminToolsTable();
+      }
       try {
         const res = await callApi('adminGetTools', { token: sessionToken });
         if (res.success) {
           adminToolsCache = res.tools || [];
-          const tbody = document.getElementById('adminToolsTableBody');
-          tbody.innerHTML = '';
-          adminToolsCache.forEach(t => {
-            const tr = document.createElement('tr');
-            const thumbUrl = t.thumbnailUrl;
-            tr.innerHTML = `
-              <td>
-                <div style="width:44px; height:44px; border-radius:8px; overflow:hidden; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
-                  ${thumbUrl ? `<img src="${escapeHtml(thumbUrl)}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:20px;">${t.icon || '🛠️'}</span>`}
-                </div>
-              </td>
-              <td>
-                <strong>${escapeHtml(t.name || 'Tool')}</strong>
-                ${t.tutorialUrl ? `<br><small style="color:#cc0000; font-weight:600; font-size:11px;">📺 Ada Tutorial YouTube</small>` : ''}
-              </td>
-              <td><code>${escapeHtml(t.slug || '')}</code></td>
-              <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
-              <td>
-                <div style="display:flex; gap:6px;">
-                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="openToolModal('${escapeHtml(String(t.toolId || ''))}')">✏️ Edit</button>
-                  <button class="btn btn-danger" style="padding: 6px 10px; font-size: 12px;" onclick="confirmDeleteTool('${escapeHtml(String(t.toolId || ''))}', '${escapeHtml(t.name || '')}')">🗑️ Hapus</button>
-                </div>
-              </td>
-            `;
-            tbody.appendChild(tr);
-          });
+          renderAdminToolsTable();
         }
       } catch (err) {
         showToast('Gagal memuat tools: ' + err.message, true);
+      }
+    }
+
+    function renderAdminToolsTable() {
+      const tbody = document.getElementById('adminToolsTableBody');
+      tbody.innerHTML = '';
+      adminToolsCache.forEach(t => {
+        const tr = document.createElement('tr');
+        const thumbUrl = t.thumbnailUrl;
+        tr.innerHTML = `
+          <td>
+            <div style="width:44px; height:44px; border-radius:8px; overflow:hidden; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
+              ${thumbUrl ? `<img src="${escapeHtml(thumbUrl)}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:20px;">${t.icon || '🛠️'}</span>`}
+            </div>
+          </td>
+          <td>
+            <strong>${escapeHtml(t.name || 'Tool')}</strong>
+            ${t.tutorialUrl ? `<br><small style="color:#cc0000; font-weight:600; font-size:11px;">📺 Ada Tutorial YouTube</small>` : ''}
+          </td>
+          <td><code>${escapeHtml(t.slug || '')}</code></td>
+          <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="openToolModal('${escapeHtml(String(t.toolId || ''))}')">✏️ Edit</button>
+              <button class="btn btn-danger" style="padding: 6px 10px; font-size: 12px;" onclick="confirmDeleteTool('${escapeHtml(String(t.toolId || ''))}', '${escapeHtml(t.name || '')}')">🗑️ Hapus</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadAdminUsers() {
+      if (adminUsersCache && adminUsersCache.length > 0) {
+        renderAdminUsersTable();
+      }
+      try {
+        const res = await callApi('adminGetUsers', { token: sessionToken });
+        if (res.success) {
+          adminUsersCache = res.users || [];
+          renderAdminUsersTable();
+        } else {
+          showToast(res.message, true);
+        }
+      } catch (err) {
+        showToast('Gagal memuat users: ' + err.message, true);
+      }
+    }
+
+    function renderAdminUsersTable() {
+      const tbody = document.getElementById('adminUsersTableBody');
+      tbody.innerHTML = '';
+      
+      let totalCount = adminUsersCache.length;
+      let activeCount = 0;
+
+      adminUsersCache.forEach(u => {
+        if (u.status === 'active') activeCount++;
+        const tr = document.createElement('tr');
+        const isSelf = currentUser && String(u.userId).trim() === String(currentUser.userId).trim();
+        tr.innerHTML = `
+          <td>
+            <strong>${escapeHtml(u.name || 'User')}</strong>
+            ${u.phone ? `<br><small style="color:var(--text-muted); font-size:11px;">📱 ${escapeHtml(u.phone)}</small>` : ''}
+          </td>
+          <td>${escapeHtml(u.email || '')}</td>
+          <td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#0f172a;">${escapeHtml(u.password || '')}</code></td>
+          <td><span class="badge ${u.role === 'admin' ? 'badge-success' : 'badge-secondary'}">${u.role || 'user'}</span></td>
+          <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status || 'active'}</span></td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId || ''))}')">✏️ Edit</button>
+              ${!isSelf ? `
+                <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${escapeHtml(String(u.userId || ''))}', '${u.status === 'active' ? 'inactive' : 'active'}')">
+                  ${u.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}
+                </button>
+                <button class="btn btn-danger" style="padding: 6px 10px; font-size:12px;" onclick="confirmDeleteUser('${escapeHtml(String(u.userId || ''))}', '${escapeHtml(u.name || '')}')">🗑️ Hapus</button>
+              ` : ''}
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('adminUsersCountBadge').innerHTML = `👥 Total Member: <strong>${totalCount}</strong> | Aktif: <strong style="color:var(--primary);">${activeCount}</strong>`;
+    }
+
+    let currentPermissionsCache = [];
+
+    async function loadAdminPermissionsData() {
+      if (adminUsersCache.length > 0 && adminToolsCache.length > 0) {
+        const activeUsers = adminUsersCache.filter(u => u.status === 'active').length;
+        document.getElementById('adminPermsCountBadge').innerHTML = `👥 Total Member: <strong>${adminUsersCache.length}</strong> | User Aktif: <strong style="color:var(--primary);">${activeUsers}</strong> | Tools Tersedia: <strong>${adminToolsCache.length}</strong>`;
+        renderPermsMatrixTable();
+      }
+
+      try {
+        const res = await callApi('adminGetPermissions', { token: sessionToken });
+
+        if (res.success) {
+          adminUsersCache = res.users || adminUsersCache;
+          adminToolsCache = res.tools || adminToolsCache;
+          currentPermissionsCache = res.permissions || [];
+
+          const activeUsers = adminUsersCache.filter(u => u.status === 'active').length;
+          document.getElementById('adminPermsCountBadge').innerHTML = `👥 Total Member: <strong>${adminUsersCache.length}</strong> | User Aktif: <strong style="color:var(--primary);">${activeUsers}</strong> | Tools Tersedia: <strong>${adminToolsCache.length}</strong>`;
+
+          renderPermsMatrixTable();
+        } else {
+          showToast('Gagal memuat data permissions.', true);
+        }
+      } catch (err) {
+        showToast('Gagal memuat data permissions: ' + err.message, true);
+      }
+    }
+
+    function filterPermsUserList() {
+      renderPermsMatrixTable();
+    }
+
+    function renderPermsMatrixTable() {
+      const tbody = document.getElementById('adminPermsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const searchInput = document.getElementById('permSearchInput');
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+      let filteredUsers = adminUsersCache;
+      if (query) {
+        filteredUsers = adminUsersCache.filter(u => 
+          (u.name && u.name.toLowerCase().includes(query)) || 
+          (u.email && u.email.toLowerCase().includes(query))
+        );
+      }
+
+      if (!filteredUsers || filteredUsers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">Data user tidak ditemukan.</td></tr>`;
+        return;
+      }
+
+      const permMap = {};
+      if (currentPermissionsCache) {
+        currentPermissionsCache.forEach(p => {
+          if (p.active) {
+            permMap[p.userId + '_' + p.toolId] = true;
+          }
+        });
+      }
+
+      filteredUsers.forEach(u => {
+        const tr = document.createElement('tr');
+        const uId = String(u.userId).trim();
+
+        let toolCheckboxes = '';
+        if (u.role === 'admin') {
+          toolCheckboxes = `<span class="badge badge-success">⭐ Full Access (Administrator)</span>`;
+        } else if (!adminToolsCache || adminToolsCache.length === 0) {
+          toolCheckboxes = `<span style="font-size:12px; color:var(--text-muted);">Belum ada tool terdaftar.</span>`;
+        } else {
+          toolCheckboxes = `<div style="display:flex; flex-wrap:wrap; gap:10px;">`;
+          adminToolsCache.forEach(t => {
+            const tId = String(t.toolId).trim();
+            const hasPerm = !!permMap[uId + '_' + tId];
+            toolCheckboxes += `
+              <label style="display:inline-flex; align-items:center; gap:6px; background:#f8fafc; padding:6px 12px; border-radius:8px; border:1px solid var(--border); font-size:12px; cursor:pointer;">
+                <input type="checkbox" data-user-id="${escapeHtml(uId)}" data-tool-id="${escapeHtml(tId)}" ${hasPerm ? 'checked' : ''} style="accent-color:var(--primary); width:16px; height:16px;">
+                <span>${t.icon || '🛠️'} ${escapeHtml(t.name)}</span>
+              </label>
+            `;
+          });
+          toolCheckboxes += `</div>`;
+        }
+
+        tr.innerHTML = `
+          <td>
+            <strong>${escapeHtml(u.name || 'User')}</strong>
+            <br><small style="color:var(--text-muted);">${escapeHtml(u.email)}</small>
+            ${u.phone ? `<br><small style="color:var(--text-muted);">📱 ${escapeHtml(u.phone)}</small>` : ''}
+          </td>
+          <td>${toolCheckboxes}</td>
+          <td>
+            ${u.role !== 'admin' ? `
+              <button class="btn btn-primary" style="padding:6px 12px; font-size:12px;" onclick="saveSingleUserPerms('${escapeHtml(uId)}')">💾 Simpan Hak Akses</button>
+            ` : `<span style="font-size:12px; color:var(--text-muted);">-</span>`}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function saveSingleUserPerms(userId) {
+      const checkboxes = document.querySelectorAll(`input[data-user-id="${userId}"]:checked`);
+      const selectedToolIds = [];
+      checkboxes.forEach(cb => {
+        selectedToolIds.push(cb.getAttribute('data-tool-id'));
+      });
+
+      try {
+        const res = await callApi('adminSavePermissions', {
+          token: sessionToken,
+          targetUserId: userId,
+          selectedToolIds: selectedToolIds
+        });
+
+        if (res.success) {
+          showToast('Hak akses user berhasil diperbarui!');
+          loadAdminPermissionsData();
+        } else {
+          showToast(res.message || 'Gagal menyimpan hak akses', true);
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message, true);
       }
     }
 
@@ -1740,75 +1907,73 @@
     }
 
     function updateBulkPreview() {
-      const rawText = document.getElementById('bulkUserTextarea').value.trim();
-      const infoEl = document.getElementById('bulkPreviewInfo');
-      if (!rawText) {
-        infoEl.innerText = '';
-        return;
-      }
-      const lines = rawText.split('\n').filter(l => l.trim() !== '');
+      const text = document.getElementById('bulkUserTextarea').value;
+      const lines = text.split('\n');
       let validCount = 0;
+
       lines.forEach(line => {
-        const emailMatch = line.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-        if (emailMatch) validCount++;
+        const clean = line.trim();
+        if (clean) {
+          const emailMatch = clean.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+          if (emailMatch) validCount++;
+        }
       });
-      infoEl.innerText = `✅ Terdeteksi ${validCount} user valid dari ${lines.length} baris input.`;
+
+      const infoBox = document.getElementById('bulkPreviewInfo');
+      if (validCount > 0) {
+        infoBox.innerHTML = `✅ Terdeteksi <strong>${validCount}</strong> user valid siap diimpor.`;
+      } else {
+        infoBox.innerHTML = ``;
+      }
     }
 
     async function submitBulkUserForm() {
-      const rawText = document.getElementById('bulkUserTextarea').value.trim();
-      const btn = document.getElementById('btnSubmitBulkUser');
-      if (!rawText) {
-        showToast('Data raw user belum diisi!', true);
-        return;
-      }
-
-      const lines = rawText.split('\n').filter(l => l.trim() !== '');
-      const parsedUsers = [];
+      const text = document.getElementById('bulkUserTextarea').value;
+      const lines = text.split('\n');
+      const usersList = [];
 
       lines.forEach(line => {
-        const emailMatch = line.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+        const cleanLine = line.trim();
+        if (!cleanLine) return;
+
+        const emailMatch = cleanLine.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
         if (!emailMatch) return;
 
-        const email = emailMatch[0].trim();
-        let remaining = line.replace(email, '').trim();
+        const email = emailMatch[0].toLowerCase();
+        let remaining = cleanLine.replace(emailMatch[0], '');
 
-        let name = '';
+        const phoneMatch = remaining.match(/\b08\d{8,11}\b|\b\+?62\d{8,11}\b/);
         let phone = '';
-
-        const parts = remaining.split(/[,|;\t]/).map(p => p.trim()).filter(p => p !== '');
-        parts.forEach(p => {
-          if (/^[0-9+\s-]{8,}$/.test(p)) {
-            phone = p;
-          } else if (!name) {
-            name = p;
-          }
-        });
-
-        if (!name) {
-          name = email.split('@')[0];
+        if (phoneMatch) {
+          phone = phoneMatch[0];
+          remaining = remaining.replace(phoneMatch[0], '');
         }
 
-        parsedUsers.push({
+        let name = remaining.replace(/[,|;\t]/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!name) {
+          name = email.split('@')[0];
+          name = name.charAt(0).toUpperCase() + name.slice(1);
+        }
+
+        usersList.push({
           name: name,
           email: email,
-          phone: phone
+          phone: phone,
+          role: 'user'
         });
       });
 
-      if (parsedUsers.length === 0) {
-        showToast('Format data tidak valid! Tidak ada email yang terdeteksi.', true);
+      if (usersList.length === 0) {
+        showToast('Tidak ada data user valid yang ditemukan. Cek format penulisan.', true);
         return;
       }
 
+      const btn = document.getElementById('btnSubmitBulkUser');
       btn.disabled = true;
-      btn.innerText = 'Memproses Import...';
+      btn.innerText = 'Memproses...';
 
       try {
-        const res = await callApi('adminBulkCreateUsers', {
-          token: sessionToken,
-          usersList: parsedUsers
-        });
+        const res = await callApi('adminBulkCreateUsers', { token: sessionToken, usersList: usersList });
         btn.disabled = false;
         btn.innerText = 'Impor Sekarang';
 
@@ -1822,190 +1987,7 @@
       } catch (err) {
         btn.disabled = false;
         btn.innerText = 'Impor Sekarang';
-        showToast('Error import: ' + err.message, true);
-      }
-    }
-
-    async function loadAdminUsers() {
-      try {
-        const res = await callApi('adminGetUsers', { token: sessionToken });
-        if (res.success) {
-          adminUsersCache = res.users || [];
-          const tbody = document.getElementById('adminUsersTableBody');
-          tbody.innerHTML = '';
-          
-          let totalCount = adminUsersCache.length;
-          let activeCount = 0;
-
-          adminUsersCache.forEach(u => {
-            if (u.status === 'active') activeCount++;
-            const tr = document.createElement('tr');
-            const isSelf = currentUser && String(u.userId).trim() === String(currentUser.userId).trim();
-            tr.innerHTML = `
-              <td>
-                <strong>${escapeHtml(u.name || 'User')}</strong>
-                ${u.phone ? `<br><small style="color:var(--text-muted); font-size:11px;">📱 ${escapeHtml(u.phone)}</small>` : ''}
-              </td>
-              <td>${escapeHtml(u.email || '')}</td>
-              <td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#0f172a;">${escapeHtml(u.password || '')}</code></td>
-              <td><span class="badge ${u.role === 'admin' ? 'badge-success' : 'badge-secondary'}">${u.role || 'user'}</span></td>
-              <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status || 'active'}</span></td>
-              <td>
-                <div style="display:flex; gap:6px;">
-                  <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId || ''))}')">✏️ Edit</button>
-                  ${!isSelf ? `
-                    <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${escapeHtml(String(u.userId || ''))}', '${u.status === 'active' ? 'inactive' : 'active'}')">
-                      ${u.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}
-                    </button>
-                    <button class="btn btn-danger" style="padding: 6px 10px; font-size:12px;" onclick="confirmDeleteUser('${escapeHtml(String(u.userId || ''))}', '${escapeHtml(u.name || '')}')">🗑️ Hapus</button>
-                  ` : ''}
-                </div>
-              </td>
-            `;
-            tbody.appendChild(tr);
-          });
-
-          document.getElementById('adminUsersCountBadge').innerHTML = `👥 Total Member: <strong>${totalCount}</strong> | Aktif: <strong style="color:var(--primary);">${activeCount}</strong>`;
-        } else {
-          showToast(res.message, true);
-        }
-      } catch (err) {
-        showToast('Gagal memuat users: ' + err.message, true);
-      }
-    }
-
-    let currentPermissionsCache = [];
-
-    async function loadAdminPermissionsData() {
-      try {
-        const [resUsers, resTools, resPerms] = await Promise.all([
-          callApi('adminGetUsers', { token: sessionToken }),
-          callApi('adminGetTools', { token: sessionToken }),
-          callApi('adminGetPermissions', { token: sessionToken })
-        ]);
-
-        if (resUsers.success && resTools.success && resPerms.success) {
-          adminUsersCache = resUsers.users || [];
-          adminToolsCache = resTools.tools || [];
-          currentPermissionsCache = resPerms.permissions || [];
-
-          const activeUsers = adminUsersCache.filter(u => u.status === 'active').length;
-          document.getElementById('adminPermsCountBadge').innerHTML = `👥 Total Member: <strong>${adminUsersCache.length}</strong> | User Aktif: <strong style="color:var(--primary);">${activeUsers}</strong> | Tools Tersedia: <strong>${adminToolsCache.length}</strong>`;
-
-          renderPermsMatrixTable();
-        } else {
-          showToast('Gagal memuat data permissions.', true);
-        }
-      } catch (err) {
-        showToast('Gagal memuat data permissions: ' + err.message, true);
-      }
-    }
-
-    function renderPermsMatrixTable() {
-      const tbody = document.getElementById('adminPermsTableBody');
-      const search = (document.getElementById('permSearchInput').value || '').toLowerCase().trim();
-      tbody.innerHTML = '';
-
-      if (!adminUsersCache || adminUsersCache.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">Belum ada user registered.</td></tr>';
-        return;
-      }
-
-      const filteredUsers = adminUsersCache.filter(u => {
-        if (!search) return true;
-        return (u.name && u.name.toLowerCase().includes(search)) || (u.email && u.email.toLowerCase().includes(search));
-      });
-
-      if (filteredUsers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">Tidak ada user yang cocok dengan pencarian.</td></tr>';
-        return;
-      }
-
-      filteredUsers.forEach(user => {
-        const userIdStr = String(user.userId || '').trim();
-        const tr = document.createElement('tr');
-
-        let toolsCheckboxesHtml = '<div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">';
-        
-        if (!adminToolsCache || adminToolsCache.length === 0) {
-          toolsCheckboxesHtml += '<span style="color:var(--text-muted); font-size:12px;">Belum ada tool tersimpan.</span>';
-        } else {
-          adminToolsCache.forEach(tool => {
-            const toolIdStr = String(tool.toolId || '').trim();
-            const hasPerm = currentPermissionsCache.some(p => String(p.userId || '').trim() === userIdStr && String(p.toolId || '').trim() === toolIdStr && p.active);
-            
-            toolsCheckboxesHtml += `
-              <label style="display:inline-flex; align-items:center; gap:6px; background:${hasPerm ? '#ecfdf5' : '#f8fafc'}; border:1px solid ${hasPerm ? '#059669' : '#e2e8f0'}; padding:6px 12px; border-radius:20px; cursor:pointer; font-size:12px; font-weight:${hasPerm ? '700' : '500'}; transition:all 0.15s;">
-                <input type="checkbox" class="perm-chk-${userIdStr}" data-toolid="${toolIdStr}" ${hasPerm ? 'checked' : ''} style="accent-color:var(--primary); cursor:pointer;">
-                <span>${tool.icon || '🛠️'} ${escapeHtml(tool.name || 'Tool')}</span>
-              </label>
-            `;
-          });
-        }
-        toolsCheckboxesHtml += '</div>';
-
-        tr.innerHTML = `
-          <td>
-            <strong>${escapeHtml(user.name || 'User')}</strong>
-            <br><small style="color:var(--text-muted); font-size:12px;">${escapeHtml(user.email || '')}</small>
-            <br><span class="badge ${user.role === 'admin' ? 'badge-success' : 'badge-secondary'}" style="margin-top:4px;">${user.role || 'user'}</span>
-          </td>
-          <td>${toolsCheckboxesHtml}</td>
-          <td style="vertical-align:middle;">
-            <button class="btn btn-primary" id="btn_save_perm_${userIdStr}" style="padding:8px 14px; font-size:12px; width:auto;" onclick="saveSingleUserPermissions('${userIdStr}')">💾 Simpan Akses</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function filterPermsUserList() {
-      renderPermsMatrixTable();
-    }
-
-    async function saveSingleUserPermissions(userIdStr) {
-      const btn = document.getElementById('btn_save_perm_' + userIdStr);
-      const checkboxes = document.querySelectorAll('.perm-chk-' + userIdStr);
-      
-      const selectedToolIds = [];
-      checkboxes.forEach(chk => {
-        if (chk.checked) {
-          selectedToolIds.push(chk.getAttribute('data-toolid'));
-        }
-      });
-
-      if (btn) {
-        btn.disabled = true;
-        btn.innerText = 'Saving...';
-      }
-
-      try {
-        const res = await callApi('adminSavePermissions', { token: sessionToken, targetUserId: userIdStr, selectedToolIds: selectedToolIds });
-        if (btn) {
-          btn.disabled = false;
-          btn.innerText = '💾 Simpan Akses';
-        }
-
-        if (res.success) {
-          showToast('Akses user berhasil diperbarui!');
-          selectedToolIds.forEach(tId => {
-            let perm = currentPermissionsCache.find(p => String(p.userId).trim() === userIdStr && String(p.toolId).trim() === tId);
-            if (perm) {
-              perm.active = true;
-            } else {
-              currentPermissionsCache.push({ userId: userIdStr, toolId: tId, active: true });
-            }
-          });
-          renderPermsMatrixTable();
-        } else {
-          showToast(res.message, true);
-        }
-      } catch (err) {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerText = '💾 Simpan Akses';
-        }
-        showToast('Gagal menyimpan akses: ' + err.message, true);
+        showToast('Error: ' + err.message, true);
       }
     }
 
