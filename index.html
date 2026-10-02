@@ -857,9 +857,9 @@
       </div>
 
       <div class="form-group">
-        <label>Thumbnail Tool (Otomatis Kompresi 1:1 Square 300x300)</label>
+        <label>Thumbnail Tool (Otomatis Kompresi 1:1 Square 200x200)</label>
         <input type="url" id="modalToolThumbUrl" class="form-control" placeholder="URL Gambar https://... (opsional)" oninput="previewThumbnailImage()">
-        <div style="margin-top: 6px; font-size: 11px; color: var(--text-muted);">Atau Upload File Gambar (Kompresi Otomatis):</div>
+        <div style="margin-top: 6px; font-size: 11px; color: var(--text-muted);">Atau Upload File Gambar (Kompresi Otomatis ~6KB):</div>
         <input type="file" id="modalToolThumbFile" accept="image/*" class="form-control" style="padding: 6px; font-size: 12px; margin-top: 4px;" onchange="handleThumbnailFileUpload(event)">
         
         <div id="thumbPreviewContainer" style="margin-top: 10px; width: 100px; height: 100px; border-radius: 12px; border: 1px dashed var(--border); overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
@@ -1018,7 +1018,7 @@
       }
     }
 
-    async function callApi(action, payload = {}) {
+    async function callApi(action, payload = {}, isRetry = false) {
       if (!backendUrl) {
         backendUrl = DEFAULT_BACKEND_URL;
       }
@@ -1036,12 +1036,14 @@
 
         if (!response.ok) {
           if (response.status === 404) {
-            showToast('Error 404: URL Web App Apps Script tidak ditemukan/salah!', true);
-            document.getElementById('apiConfigBanner').classList.remove('hidden');
-            setTimeout(() => {
-              promptApiUrl();
-            }, 800);
-            throw new Error('HTTP 404: Web App URL Apps Script kadaluarsa atau tidak ditemukan.');
+            if (!isRetry && storedBackend && storedBackend !== DEFAULT_BACKEND_URL) {
+              localStorage.removeItem('asaltekun_backend_url');
+              storedBackend = null;
+              backendUrl = DEFAULT_BACKEND_URL;
+              return await callApi(action, payload, true);
+            }
+            showToast('Error 404: Endpoint Backend Apps Script tidak ditemukan.', true);
+            throw new Error('HTTP 404: Web App URL Apps Script tidak ditemukan.');
           }
           throw new Error('Server HTTP Error: ' + response.status);
         }
@@ -1049,6 +1051,12 @@
         const data = await response.json();
         return data;
       } catch (err) {
+        if (!isRetry && storedBackend && storedBackend !== DEFAULT_BACKEND_URL) {
+          localStorage.removeItem('asaltekun_backend_url');
+          storedBackend = null;
+          backendUrl = DEFAULT_BACKEND_URL;
+          return await callApi(action, payload, true);
+        }
         console.error('API Error:', err);
         throw err;
       }
@@ -1563,7 +1571,7 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          const maxDim = 300;
+          const maxDim = 200;
           canvas.width = maxDim;
           canvas.height = maxDim;
           const ctx = canvas.getContext('2d');
@@ -1577,7 +1585,7 @@
           
           ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, maxDim, maxDim);
           
-          const resizedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          const resizedBase64 = canvas.toDataURL('image/jpeg', 0.7);
           document.getElementById('modalToolThumbUrl').value = resizedBase64;
           previewThumbnailImage();
         };
@@ -1595,7 +1603,7 @@
           document.getElementById('modalToolId').value = tool.toolId || '';
           document.getElementById('modalToolName').value = tool.name || '';
           document.getElementById('modalToolSlug').value = tool.slug || '';
-          document.getElementById('modalToolIcon').value = tool.icon || '🛠️';
+          document.getElementById('modalToolIcon').value = tool.icon || '🛠️️';
           document.getElementById('modalToolDesc').value = tool.description || '';
           document.getElementById('modalToolUrl').value = tool.canvasUrl || '';
           document.getElementById('modalToolBuyUrl').value = tool.buyUrl || '';
@@ -1608,7 +1616,7 @@
         document.getElementById('modalToolId').value = '';
         document.getElementById('modalToolName').value = '';
         document.getElementById('modalToolSlug').value = '';
-        document.getElementById('modalToolIcon').value = '🛠️';
+        document.getElementById('modalToolIcon').value = '🛠️️';
         document.getElementById('modalToolDesc').value = '';
         document.getElementById('modalToolUrl').value = '';
         document.getElementById('modalToolBuyUrl').value = '';
@@ -1762,12 +1770,12 @@
           <td><span class="badge ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status || 'active'}</span></td>
           <td>
             <div style="display:flex; gap:6px;">
-              <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId || ''))}')">✏️️ Edit</button>
+              <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="openEditUserModal('${escapeHtml(String(u.userId || ''))}')">✏ Edit</button>
               ${!isSelf ? `
                 <button class="btn btn-secondary" style="padding: 6px 10px; font-size:12px;" onclick="toggleUserStatus('${escapeHtml(String(u.userId || ''))}', '${u.status === 'active' ? 'inactive' : 'active'}')">
                   ${u.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}
                 </button>
-                <button class="btn btn-danger" style="padding: 6px 10px; font-size:12px;" onclick="confirmDeleteUser('${escapeHtml(String(u.userId || ''))}', '${escapeHtml(u.name || '')}')">🗑️️ Hapus</button>
+                <button class="btn btn-danger" style="padding: 6px 10px; font-size:12px;" onclick="confirmDeleteUser('${escapeHtml(String(u.userId || ''))}', '${escapeHtml(u.name || '')}')">🗑 Hapus</button>
               ` : ''}
             </div>
           </td>
