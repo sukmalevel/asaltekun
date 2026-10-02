@@ -865,7 +865,7 @@
       <div class="form-group">
         <label>Thumbnail Tool (Rasio 1:1 / Square 1024x1024)</label>
         <input type="url" id="modalToolThumbUrl" class="form-control" placeholder="URL Gambar https://... (opsional)" oninput="previewThumbnailImage()">
-        <div style="margin-top: 6px; font-size: 11px; color: var(--text-muted);">Atau Upload File Gambar:</div>
+        <div style="margin-top: 6px; font-size: 11px; color: var(--text-muted);">Atau Upload File Gambar (Otomatis Simpan ke Google Drive):</div>
         <input type="file" id="modalToolThumbFile" accept="image/*" class="form-control" style="padding: 6px; font-size: 12px; margin-top: 4px;" onchange="handleThumbnailFileUpload(event)">
         
         <div id="thumbPreviewContainer" style="margin-top: 10px; width: 120px; height: 120px; border-radius: 12px; border: 1px dashed var(--border); overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
@@ -1567,10 +1567,31 @@
     function handleThumbnailFileUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
+
       const reader = new FileReader();
       reader.onload = function(evt) {
-        document.getElementById('modalToolThumbUrl').value = evt.target.result;
-        previewThumbnailImage();
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 1024;
+          canvas.width = maxDim;
+          canvas.height = maxDim;
+          const ctx = canvas.getContext('2d');
+          
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, maxDim, maxDim);
+          
+          const minDim = Math.min(img.width, img.height);
+          const sx = (img.width - minDim) / 2;
+          const sy = (img.height - minDim) / 2;
+          
+          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, maxDim, maxDim);
+          
+          const resizedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          document.getElementById('modalToolThumbUrl').value = resizedBase64;
+          previewThumbnailImage();
+        };
+        img.src = evt.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -1692,7 +1713,7 @@
         tr.innerHTML = `
           <td>
             <div style="width:44px; height:44px; border-radius:8px; overflow:hidden; background:#f1f5f9; display:flex; align-items:center; justify-content:center;">
-              ${thumbUrl ? `<img src="${escapeHtml(thumbUrl)}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:20px;">${t.icon || '🛠️'}</span>`}
+              ${thumbUrl ? `<img src="${escapeHtml(thumbUrl)}" style="width:100%; height:100%; object-fit:cover;">` : `<span style="font-size:20px;">${t.icon || '🛠️️'}</span>`}
             </div>
           </td>
           <td>
