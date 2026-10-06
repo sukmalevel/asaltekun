@@ -874,7 +874,7 @@
       </div>
       <div class="form-group">
         <label>URL / Endpoint Canvas Tool</label>
-        <input type="url" id="modalToolUrl" class="form-control" placeholder="https://..." required>
+        <input type="text" id="modalToolUrl" class="form-control" placeholder="https://... (opsional)">
       </div>
       <div class="form-group">
         <label>Link Pembelian / Checkout URL (Jika Belum Dimiliki)</label>
@@ -1645,8 +1645,8 @@
       const active = document.getElementById('modalToolActive').checked;
       const btn = document.getElementById('btnSubmitTool');
 
-      if (!name || !canvasUrl) {
-        showToast('Nama Tool dan URL Endpoint Canvas wajib diisi!', true);
+      if (!name) {
+        showToast('Nama Tool wajib diisi!', true);
         return;
       }
 
