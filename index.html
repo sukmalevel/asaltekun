@@ -1019,14 +1019,11 @@
     }
 
     async function callApi(action, payload = {}, isRetry = false) {
-      if (!backendUrl) {
-        backendUrl = DEFAULT_BACKEND_URL;
-      }
-
+      let targetUrl = backendUrl || DEFAULT_BACKEND_URL;
       const bodyData = { action: action, ...payload };
 
       try {
-        const response = await fetch(backendUrl, {
+        const response = await fetch(targetUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'text/plain;charset=utf-8'
@@ -1035,25 +1032,20 @@
         });
 
         if (!response.ok) {
-          if (response.status === 404) {
-            if (!isRetry && storedBackend && storedBackend !== DEFAULT_BACKEND_URL) {
-              localStorage.removeItem('asaltekun_backend_url');
-              storedBackend = null;
-              backendUrl = DEFAULT_BACKEND_URL;
-              return await callApi(action, payload, true);
-            }
-            showToast('Error 404: Endpoint Backend Apps Script tidak ditemukan.', true);
-            throw new Error('HTTP 404: Web App URL Apps Script tidak ditemukan.');
+          if (!isRetry) {
+            localStorage.removeItem('asaltekun_backend_url');
+            backendUrl = DEFAULT_BACKEND_URL;
+            return await callApi(action, payload, true);
           }
+          showToast('Error: Endpoint Backend Apps Script tidak dapat diakses.', true);
           throw new Error('Server HTTP Error: ' + response.status);
         }
 
         const data = await response.json();
         return data;
       } catch (err) {
-        if (!isRetry && storedBackend && storedBackend !== DEFAULT_BACKEND_URL) {
+        if (!isRetry) {
           localStorage.removeItem('asaltekun_backend_url');
-          storedBackend = null;
           backendUrl = DEFAULT_BACKEND_URL;
           return await callApi(action, payload, true);
         }
@@ -1705,7 +1697,7 @@
     function renderAdminToolsTable() {
       const tbody = document.getElementById('adminToolsTableBody');
       tbody.innerHTML = '';
-      adminToolsCache.forEach(t => {
+      adminToolsCache.forEach((t, index) => {
         const tr = document.createElement('tr');
         const thumbUrl = t.thumbnailUrl;
         tr.innerHTML = `
@@ -1721,9 +1713,13 @@
           <td><code>${escapeHtml(t.slug || '')}</code></td>
           <td><span class="badge ${t.active ? 'badge-success' : 'badge-danger'}">${t.active ? 'Aktif' : 'Nonaktif'}</span></td>
           <td>
-            <div style="display:flex; gap:6px;">
+            <div style="display:flex; gap:6px; align-items:center;">
               <button class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="openToolModal('${escapeHtml(String(t.toolId || ''))}')">✏️ Edit</button>
               <button class="btn btn-danger" style="padding: 6px 10px; font-size: 12px;" onclick="confirmDeleteTool('${escapeHtml(String(t.toolId || ''))}', '${escapeHtml(t.name || '')}')">🗑️ Hapus</button>
+              <div style="display:flex; flex-direction:column; gap:2px; margin-left:4px;">
+                <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 10px;" title="Pindahkan ke Atas" onclick="moveToolOrder(${index}, -1)" ${index === 0 ? 'disabled' : ''}>⬆️</button>
+                <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 10px;" title="Pindahkan ke Bawah" onclick="moveToolOrder(${index}, 1)" ${index === adminToolsCache.length - 1 ? 'disabled' : ''}>⬇️</button>
+              </div>
             </div>
           </td>
         `;
@@ -1731,20 +1727,27 @@
       });
     }
 
-    async function loadAdminUsers() {
-      if (adminUsersCache && adminUsersCache.length > 0) {
-        renderAdminUsersTable();
-      }
+    async function moveToolOrder(index, direction) {
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= adminToolsCache.length) return;
+
+      const temp = adminToolsCache[index];
+      adminToolsCache[index] = adminToolsCache[newIndex];
+      adminToolsCache[newIndex] = temp;
+
+      renderAdminToolsTable();
+
+      const orderedIds = adminToolsCache.map(t => t.toolId);
       try {
-        const res = await callApi('adminGetUsers', { token: sessionToken });
+        const res = await callApi('adminReorderTools', { token: sessionToken, toolOrderIds: orderedIds });
         if (res.success) {
-          adminUsersCache = res.users || [];
-          renderAdminUsersTable();
+          showToast('Urutan tool berhasil diperbarui!');
+          loadUserTools();
         } else {
-          showToast(res.message, true);
+          showToast(res.message || 'Gagal mengubah urutan', true);
         }
       } catch (err) {
-        showToast('Gagal memuat users: ' + err.message, true);
+        showToast('Gagal mengubah urutan: ' + err.message, true);
       }
     }
 
